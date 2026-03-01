@@ -15,12 +15,10 @@ export default function Page() {
             <HeroBooking />
 
             {/* Metrics strip (Section 1 only) */}
-            <div className="w-full max-w-[700px]">
-              <div className="mb-10 border-t border-black/10" />
+            <div className="w-full">
+              <div className="mb-10 w-full border-t border-black/10" />
 
-              <div className="grid gap-10 sm:gap-12 md:grid-cols-4">
-                <div className="hidden md:block" />
-
+              <div className="grid gap-10 sm:gap-12 md:grid-cols-3">
                 <div className="text-left">
                   <div className="text-[36px] font-bold leading-[40px] tracking-tight text-black">15.000+</div>
                   <div className="mt-2 text-xs font-medium uppercase tracking-wider text-black/50">
