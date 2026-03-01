@@ -10,8 +10,36 @@ export default function Page() {
     <div id="top">
       {/* Section 1 gets a custom layout wrapper (1200px max-width + near full-viewport height). */}
       <section className="w-full bg-white">
-        <div className="mx-auto flex min-h-[calc(100vh-80px)] w-full max-w-[1200px] items-center px-4 py-16 sm:px-6 lg:px-8">
-          <HeroBooking />
+        <div className="mx-auto flex min-h-[calc(100vh-80px)] w-full max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8">
+          <div className="flex w-full flex-col justify-between gap-14">
+            <HeroBooking />
+
+            {/* Metrics strip (Section 1 only) */}
+            <div className="grid gap-10 sm:gap-12 lg:grid-cols-4">
+              <div className="hidden lg:block" />
+
+              <div className="text-left">
+                <div className="text-4xl font-bold tracking-tight text-black sm:text-5xl">15.000+</div>
+                <div className="mt-2 text-xs font-medium uppercase tracking-wider text-black/50">
+                  RITTEN
+                </div>
+              </div>
+
+              <div className="text-left">
+                <div className="text-4xl font-bold tracking-tight text-black sm:text-5xl">8+</div>
+                <div className="mt-2 text-xs font-medium uppercase tracking-wider text-black/50">
+                  JAAR ACTIEF
+                </div>
+              </div>
+
+              <div className="text-left">
+                <div className="text-4xl font-bold tracking-tight text-black sm:text-5xl">4,96★</div>
+                <div className="mt-2 text-xs font-medium uppercase tracking-wider text-black/50">
+                  BEOORDELING
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
