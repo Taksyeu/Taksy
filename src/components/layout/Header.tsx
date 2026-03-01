@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/Button';
@@ -6,8 +7,15 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-black/10 bg-white/80 backdrop-blur">
       <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <Link href="/" className="text-[18px] font-semibold tracking-wide text-black">
-          TAKSY
+        <Link href="/" className="inline-flex items-center">
+          <Image
+            src="/brand/taksy-logo.svg"
+            alt="TAKSY"
+            width={120}
+            height={18}
+            priority
+            style={{ width: 'auto', height: 18 }}
+          />
         </Link>
 
         <nav className="hidden items-center gap-6 text-sm text-black/70 sm:flex">
