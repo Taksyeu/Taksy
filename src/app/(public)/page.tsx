@@ -18,7 +18,9 @@ export default function Page() {
             <div className="w-full">
               <div className="mb-10 w-full border-t border-black/10" />
 
-              <div className="grid gap-10 sm:gap-12 md:grid-cols-3">
+              <div className="grid gap-10 sm:gap-12 md:[grid-template-columns:0px_repeat(3,minmax(0,1fr))]">
+                <div className="hidden md:block" />
+
                 <div className="text-left">
                   <div className="text-[36px] font-bold leading-[40px] tracking-tight text-black">15.000+</div>
                   <div className="mt-2 text-xs font-medium uppercase tracking-wider text-black/50">
