@@ -15,26 +15,28 @@ export default function Page() {
             <HeroBooking />
 
             {/* Metrics strip (Section 1 only) */}
-            <div className="mx-auto w-full max-w-[320px] md:max-w-none">
+            <div className="w-full max-w-[700px]">
+              <div className="mb-10 border-t border-black/10" />
+
               <div className="grid gap-10 sm:gap-12 md:grid-cols-4">
                 <div className="hidden md:block" />
 
                 <div className="text-left">
-                  <div className="text-4xl font-bold tracking-tight text-black sm:text-5xl">15.000+</div>
+                  <div className="text-[36px] font-bold leading-[40px] tracking-tight text-black">15.000+</div>
                   <div className="mt-2 text-xs font-medium uppercase tracking-wider text-black/50">
                     RITTEN
                   </div>
                 </div>
 
                 <div className="text-left">
-                  <div className="text-4xl font-bold tracking-tight text-black sm:text-5xl">8+</div>
+                  <div className="text-[36px] font-bold leading-[40px] tracking-tight text-black">8+</div>
                   <div className="mt-2 text-xs font-medium uppercase tracking-wider text-black/50">
                     JAAR ACTIEF
                   </div>
                 </div>
 
                 <div className="text-left">
-                  <div className="text-4xl font-bold tracking-tight text-black sm:text-5xl">4,96★</div>
+                  <div className="text-[36px] font-bold leading-[40px] tracking-tight text-black">4,96★</div>
                   <div className="mt-2 text-xs font-medium uppercase tracking-wider text-black/50">
                     BEOORDELING
                   </div>
