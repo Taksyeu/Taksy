@@ -63,10 +63,25 @@ export function HeroBooking() {
           <li>• Gebouwd door een actieve chauffeur</li>
         </ul>
 
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Button href="#sponsors">Bekijk sponsor tiers</Button>
-          <Button variant="secondary" href="#how-it-works">
-            Hoe het werkt
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <Button
+            type="button"
+            className="h-11 w-full justify-center rounded-md bg-[#000000] px-7 py-2 text-sm font-medium text-[#FFFFFF] hover:bg-black/90 sm:w-auto"
+            onClick={() => {
+              document.querySelector('#sponsors')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+          >
+            Word Supporter
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            className="h-11 w-full justify-center rounded-md border border-[#000000] bg-[#FFFFFF] px-7 py-2 text-sm font-medium text-[#000000] hover:border-black/60 sm:w-auto"
+            onClick={() => {
+              document.querySelector('#calculator')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+          >
+            Portfolio
           </Button>
         </div>
 
