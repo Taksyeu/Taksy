@@ -18,16 +18,8 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-black/10 bg-white sm:bg-white/80 sm:backdrop-blur">
       <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <Link href="/" className="inline-flex shrink-0 items-center">
-          {/* NOTE: Keep this SVG crisp on mobile by avoiding backdrop-filter rasterization and any transforms. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/brand/taksy-logo.svg"
-            alt="TAKSY"
-            style={{ width: 100, height: 'auto' }}
-            className="block shrink-0"
-            draggable={false}
-          />
+        <Link href="/" className="text-[18px] font-bold text-[#000000]">
+          TAKSY
         </Link>
 
         <nav className="hidden items-center gap-6 text-sm text-black/70 sm:flex">
