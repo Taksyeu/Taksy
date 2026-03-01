@@ -16,10 +16,10 @@ export function Header() {
   const [open, setOpen] = React.useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-black/10 bg-white/80 backdrop-blur">
+    <header className="sticky top-0 z-50 w-full border-b border-black/10 bg-white sm:bg-white/80 sm:backdrop-blur">
       <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <Link href="/" className="inline-flex shrink-0 items-center">
-          {/* NOTE: This is an SVG file served as SVG (not rasterized). Avoid transforms/scale for sharpness. */}
+          {/* NOTE: Keep this SVG crisp on mobile by avoiding backdrop-filter rasterization and any transforms. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/brand/taksy-logo.svg"
@@ -39,13 +39,13 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
-          {/* Desktop auth buttons */}
-          <Button variant="secondary" className="hidden sm:inline-flex" href="#cta">
-            Login
-          </Button>
-          <Button className="hidden sm:inline-flex" href="#cta">
-            Register
-          </Button>
+          {/* Desktop auth buttons (never show on mobile) */}
+          <div className="hidden items-center gap-2 sm:flex">
+            <Button variant="secondary" href="#cta">
+              Login
+            </Button>
+            <Button href="#cta">Register</Button>
+          </div>
 
           {/* Mobile hamburger */}
           <button
