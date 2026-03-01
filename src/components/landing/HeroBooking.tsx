@@ -43,13 +43,19 @@ export function HeroBooking() {
         <p className="mb-3 inline-flex items-center rounded-full border border-black/10 bg-white px-3 py-1 text-xs text-black/70">
           Fase 1 demo — geen account nodig
         </p>
-        <h1 className="text-balance text-4xl font-semibold tracking-tight text-black sm:text-5xl">
-          Het taxi-platform na Uber — gebouwd voor betrouwbaarheid.
-        </h1>
-        <p className="mt-4 max-w-xl text-pretty text-base leading-relaxed text-black/70">
-          TAKSY is ontstaan uit 15.000+ ritten praktijkervaring binnen Uber en Bolt met een focus op
-          stabiliteit, voorspelbaarheid en meer controle voor chauffeurs.
-        </p>
+        <div className="max-w-[700px]">
+          <h1 className="text-balance text-[52px] font-bold leading-[52px] tracking-tight text-[#000000] sm:text-[64px] sm:leading-[62px] lg:text-[88px] lg:leading-[83.6px]">
+            Van AfariCab naar TAKSY
+          </h1>
+          <h2 className="mt-1 text-balance text-[52px] font-bold leading-[52px] tracking-tight text-[#CCCCCC] sm:text-[64px] sm:leading-[62px] lg:text-[88px] lg:leading-[83.6px]">
+            gebouwd vanuit ervaring
+          </h2>
+
+          <p className="mt-4 text-pretty text-base leading-relaxed text-black/70">
+            TAKSY is ontstaan uit 15.000+ ritten praktijkervaring binnen Uber en Bolt met een focus op
+            stabiliteit, voorspelbaarheid en meer controle voor chauffeurs.
+          </p>
+        </div>
 
         <ul className="mt-4 max-w-xl space-y-2 text-base text-black/70">
           <li>• Vaste maandstructuur</li>

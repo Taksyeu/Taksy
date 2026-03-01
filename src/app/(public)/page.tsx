@@ -7,10 +7,13 @@ import { SponsorTiers } from '@/components/landing/SponsorTiers';
 
 export default function Page() {
   return (
-    <div>
-      <Section tone="white" className="border-t-0">
-        <HeroBooking />
-      </Section>
+    <div id="top">
+      {/* Section 1 gets a custom layout wrapper (1200px max-width + near full-viewport height). */}
+      <section className="w-full bg-white">
+        <div className="mx-auto flex min-h-[calc(100vh-80px)] w-full max-w-[1200px] items-center px-4 py-16 sm:px-6 lg:px-8">
+          <HeroBooking />
+        </div>
+      </section>
 
       <Section id="how-it-works" tone="gray">
         <HowItWorks />
