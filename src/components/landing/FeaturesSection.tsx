@@ -74,8 +74,11 @@ export function FeaturesSection() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 [&>*]:border-black/10 [&>*]:border-t [&>*:first-child]:border-t-0 md:[&>*]:border-0 md:[&>*]:border-black/10 md:[&>*:nth-child(n+3)]:border-t md:[&>*:nth-child(2n)]:border-l lg:[&>*]:border-0 lg:[&>*]:border-black/10 lg:[&>*:nth-child(n+4)]:border-t lg:[&>*:not(:nth-child(3n+1))]:border-l"
           >
             {features.map((feature) => (
-              <div key={feature.title} className="p-8 text-left transition-colors hover:bg-black/[0.02]">
-                <div className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black">
+              <div
+                key={feature.title}
+                className="group p-8 text-left transition-colors duration-200 ease-out lg:hover:bg-black/[0.02]"
+              >
+                <div className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-black/[0.03] text-black/70 transition-colors duration-200 ease-out lg:group-hover:bg-black/[0.06] lg:group-hover:text-black">
                   {feature.icon}
                 </div>
 
