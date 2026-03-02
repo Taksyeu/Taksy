@@ -52,7 +52,7 @@ export function FeaturesSection() {
             02
           </div>
 
-          <div className="mx-auto flex w-full max-w-[900px] flex-col items-start text-left lg:items-start lg:text-left">
+          <div className="mx-auto flex w-full max-w-[1000px] flex-col items-start text-left lg:items-start lg:text-left">
             <div className="mb-4 text-xs uppercase tracking-widest text-black/50">
               PLATFORM MOGELIJKHEDEN
             </div>
@@ -61,7 +61,7 @@ export function FeaturesSection() {
               Wat TAKSY platform anders maakt
             </h2>
 
-            <p className="mt-3 max-w-[700px] text-pretty text-base leading-relaxed text-black/70">
+            <p className="mt-3 max-w-[1000px] text-pretty text-base leading-relaxed text-black/70">
               Een moderne basis voor lokale mobiliteit — transparant, schaalbaar en ontworpen voor het echte
               werk.
             </p>
