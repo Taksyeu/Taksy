@@ -70,40 +70,19 @@ export function FeaturesSection() {
 
         {/* Grid block (main white card) */}
         <div className="mt-[80px] bg-white">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature, i) => {
-              const isFirstRowMd = i < 2;
-              const isFirstColMd = i % 2 === 0;
-
-              const isFirstRowLg = i < 3;
-              const isFirstColLg = i % 3 === 0;
-
-              return (
-                <div
-                  key={feature.title}
-                  className={[
-                    'p-8 text-left transition-colors hover:bg-black/[0.02]',
-                    // Mobile (1 col): internal horizontal dividers only.
-                    i === 0 ? '' : 'border-t border-black/10',
-
-                    // Tablet (md: 2 cols): remove mobile borders for first row; add internal row/col dividers.
-                    isFirstRowMd ? 'md:border-t-0' : 'md:border-t md:border-black/10',
-                    isFirstColMd ? 'md:border-l-0' : 'md:border-l md:border-black/10',
-
-                    // Desktop (lg: 3 cols): adjust dividers to 3-col grid.
-                    isFirstRowLg ? 'lg:border-t-0' : 'lg:border-t lg:border-black/10',
-                    isFirstColLg ? 'lg:border-l-0' : 'lg:border-l lg:border-black/10',
-                  ].join(' ')}
-                >
-                  <div className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black">
-                    {feature.icon}
-                  </div>
-
-                  <div className="text-[18px] font-semibold leading-[28px] text-black">{feature.title}</div>
-                  <p className="mt-2 text-base text-black/70">{feature.body}</p>
+          <div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 [&>*]:border-black/10 [&>*]:border-t [&>*:first-child]:border-t-0 md:[&>*]:border-0 md:[&>*]:border-black/10 md:[&>*:nth-child(n+3)]:border-t md:[&>*:nth-child(2n)]:border-l lg:[&>*]:border-0 lg:[&>*]:border-black/10 lg:[&>*:nth-child(n+4)]:border-t lg:[&>*:not(:nth-child(3n+1))]:border-l"
+          >
+            {features.map((feature) => (
+              <div key={feature.title} className="p-8 text-left transition-colors hover:bg-black/[0.02]">
+                <div className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black">
+                  {feature.icon}
                 </div>
-              );
-            })}
+
+                <div className="text-[18px] font-semibold leading-[28px] text-black">{feature.title}</div>
+                <p className="mt-2 text-base text-black/70">{feature.body}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
