@@ -46,7 +46,7 @@ export function FeaturesSection() {
         {/* Top intro block */}
         <div className="relative pt-6">
           <div
-            className="pointer-events-none absolute left-0 top-0 -z-10 select-none text-[120px] font-bold leading-none text-black/[0.04] sm:text-[140px]"
+            className="pointer-events-none absolute left-0 top-0 -z-10 select-none text-[120px] font-bold leading-none text-black/[0.04] sm:text-[140px] md:text-[120px] lg:text-[140px]"
             aria-hidden="true"
           >
             02
