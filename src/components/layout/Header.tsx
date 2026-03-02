@@ -18,7 +18,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-black/10 bg-white sm:bg-white/80 sm:backdrop-blur">
       <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <Link href="/" className="text-[29px] font-bold text-[#000000]">
+        <Link href="/" className="text-[31px] font-bold text-[#000000]">
           Taksy
         </Link>
 
