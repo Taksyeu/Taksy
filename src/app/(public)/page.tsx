@@ -1,4 +1,3 @@
-console.log("DEPLOY TEST OK");
 import { Section } from '@/components/layout/Section';
 import { CTA } from '@/components/landing/CTA';
 import { FareCalculator } from '@/components/landing/FareCalculator';
