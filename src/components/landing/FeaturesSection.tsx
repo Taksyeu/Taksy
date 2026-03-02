@@ -44,9 +44,9 @@ export function FeaturesSection() {
     <section id="how-it-works" className="w-full bg-[#F3F3F3] py-[120px]">
       <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
         {/* Top intro block */}
-        <div className="relative">
+        <div className="relative pt-6">
           <div
-            className="pointer-events-none absolute -left-2 top-0 select-none text-[120px] font-bold leading-none text-black/5 sm:text-[140px]"
+            className="pointer-events-none absolute left-0 top-0 -z-10 select-none text-[120px] font-bold leading-none text-black/[0.04] sm:text-[140px]"
             aria-hidden="true"
           >
             02
