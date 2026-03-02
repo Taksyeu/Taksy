@@ -53,7 +53,7 @@ export function FeaturesSection() {
           </div>
 
           <div className="mx-auto flex max-w-[900px] flex-col items-center text-center">
-            <div className="mb-3 text-xs uppercase tracking-widest text-black/50">
+            <div className="mb-4 text-xs uppercase tracking-widest text-black/50">
               PLATFORM MOGELIJKHEDEN
             </div>
 
@@ -61,7 +61,7 @@ export function FeaturesSection() {
               Wat maakt het TAKSY platform anders
             </h2>
 
-            <p className="mt-4 max-w-[700px] text-pretty text-base leading-relaxed text-black/70">
+            <p className="mt-3 max-w-[700px] text-pretty text-base leading-relaxed text-black/70">
               Een moderne basis voor lokale mobiliteit — transparant, schaalbaar en ontworpen voor het echte
               werk.
             </p>
@@ -78,11 +78,11 @@ export function FeaturesSection() {
                 key={feature.title}
                 className="group p-8 text-left transition-colors duration-200 ease-out lg:hover:bg-black/[0.02]"
               >
-                <div className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-black/[0.03] text-black/70 transition-colors duration-200 ease-out lg:group-hover:bg-black/[0.06] lg:group-hover:text-black">
+                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-black/[0.03] text-black/70 transition-colors duration-200 ease-out lg:group-hover:bg-black/[0.06] lg:group-hover:text-black">
                   {feature.icon}
                 </div>
 
-                <div className="text-[18px] font-semibold leading-[28px] text-black">{feature.title}</div>
+                <div className="mt-1 text-[18px] font-semibold leading-[28px] text-black">{feature.title}</div>
                 <p className="mt-2 text-base text-black/70">{feature.body}</p>
               </div>
             ))}
