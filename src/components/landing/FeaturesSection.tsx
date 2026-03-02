@@ -8,33 +8,33 @@ type Feature = {
 
 const features: Feature[] = [
   {
-    title: 'Platform dat verbindt',
-    body: 'Eén platform voor chauffeurs, klanten en partners — met een duidelijke flow van aanvraag tot rit.',
+    title: 'Platform dat Verbindt',
+    body: 'TAKSY richt zich op verbinden in plaats van maximaliseren. Het platform faciliteert ritten, maar laat ruimte voor samenwerking tussen chauffeurs, reizigers en lokale markten.',
     icon: <IconLink />,
   },
   {
-    title: 'Lokale rittoedeling',
-    body: 'Slimme verdeling op basis van regio en beschikbaarheid, zodat ritten eerlijker en efficiënter landen.',
+    title: 'Lokale Rittoedeling',
+    body: 'Het platform houdt rekening met regio en beschikbaarheid om lokale chauffeurs te beschermen. Zo blijft werk eerlijk verdeeld, ook bij ritten over stads- of regiogrenzen.',
     icon: <IconMapPin />,
   },
   {
     title: 'Abonnementsmodel',
-    body: 'Transparant maandmodel in plaats van onvoorspelbare kosten — eenvoudiger plannen, minder ruis.',
+    body: 'In tegenstelling tot gangbare commissiemodellen bij Uber en Bolt werkt TAKSY met een vast abonnementsmodel, zonder afdracht per rit en met voorspelbare kosten.',
     icon: <IconCreditCard />,
   },
   {
-    title: 'Vrije prijsinstelling',
-    body: 'Meer ruimte voor pricing per markt: passend bij vraag, afstand en lokale afspraken.',
+    title: 'Vrije Prijsinstelling',
+    body: 'Chauffeurs behouden binnen duidelijke kaders invloed op hun tarieven. Dit biedt flexibiliteit zonder chaos en sluit beter aan op lokale vraag en omstandigheden.',
     icon: <IconSliders />,
   },
   {
-    title: 'Inzicht in inkomsten',
-    body: 'Heldere rapportage en overzicht zodat je direct ziet wat een rit oplevert en waar winst zit.',
+    title: 'Inzicht in Inkomsten',
+    body: 'Heldere dashboards tonen inkomsten en ritten zonder verborgen berekeningen. Chauffeurs zien direct waar ze aan toe zijn, zonder prestatiedruk of onduidelijkheid.',
     icon: <IconChart />,
   },
   {
-    title: 'Gebouwd vanuit ervaring',
-    body: 'Ontwikkeld vanuit 15.000+ ritten praktijkervaring — gefocust op stabiliteit en controle.',
+    title: 'Gebouwd uit Ervaring',
+    body: 'Elke functie is gevormd vanuit jarenlange ervaring op de weg. Geen theorie, maar een platform gebouwd rond wat in de dagelijkse praktijk werkt.',
     icon: <IconSpark />,
   },
 ];
