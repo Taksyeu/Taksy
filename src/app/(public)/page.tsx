@@ -10,7 +10,7 @@ export default function Page() {
     <div id="top">
       {/* Section 1 gets a custom layout wrapper (1200px max-width + near full-viewport height). */}
       <section className="w-full bg-white">
-        <div className="mx-auto flex min-h-[calc(100vh-80px)] w-full max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto flex min-h-[calc(100vh-80px)] w-full max-w-[1280px] px-4 py-16 sm:px-6 lg:px-8">
           <div className="flex w-full flex-col justify-between gap-14">
             <HeroBooking />
 

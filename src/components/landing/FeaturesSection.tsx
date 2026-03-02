@@ -42,7 +42,7 @@ const features: Feature[] = [
 export function FeaturesSection() {
   return (
     <section id="how-it-works" className="w-full bg-[#F3F3F3] py-[140px]">
-      <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1280px] px-4 sm:px-6 lg:px-8">
         {/* Top intro block */}
         <div className="relative pt-6">
           <div
@@ -58,7 +58,7 @@ export function FeaturesSection() {
             </div>
 
             <h2 className="text-balance text-[36px] font-bold leading-[39.6px] tracking-tight text-black lg:text-[48px] lg:leading-[50.4px]">
-              Wat maakt het TAKSY platform anders
+              Wat TAKSY platform anders maakt
             </h2>
 
             <p className="mt-3 max-w-[700px] text-pretty text-base leading-relaxed text-black/70">
