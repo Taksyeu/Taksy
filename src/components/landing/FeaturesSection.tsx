@@ -41,7 +41,7 @@ const features: Feature[] = [
 
 export function FeaturesSection() {
   return (
-    <section id="how-it-works" className="w-full bg-[#F3F3F3] py-[140px]">
+    <section id="how-it-works" className="w-full bg-[#F3F3F3] py-[180px]">
       <div className="mx-auto w-full max-w-[1280px] px-4 sm:px-6 lg:px-8">
         {/* Top intro block */}
         <div className="relative pt-6">
@@ -69,7 +69,7 @@ export function FeaturesSection() {
         </div>
 
         {/* Grid block (main white card) */}
-        <div className="mt-[80px] bg-white">
+        <div className="mt-[100px] bg-white">
           <div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 [&>*]:border-black/10 [&>*]:border-t [&>*:first-child]:border-t-0 md:[&>*]:border-0 md:[&>*]:border-black/10 md:[&>*:nth-child(n+3)]:border-t md:[&>*:nth-child(2n)]:border-l lg:[&>*]:border-0 lg:[&>*]:border-black/10 lg:[&>*:nth-child(n+4)]:border-t lg:[&>*:not(:nth-child(3n+1))]:border-l"
           >
