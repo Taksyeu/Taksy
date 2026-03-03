@@ -2,18 +2,26 @@
 
 import * as React from 'react';
 
-import { calculateDemoFare } from '@/demo/fare';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
+
+const STARTTARIEF = 3.5;
+const PRIJS_PER_KM = 2.4;
+const PRIJS_PER_MIN = 0.4;
+const BTW_PERCENTAGE = 9;
+const PLATFORM_PERCENTAGE = 0.07;
+const VASTE_PLATFORM_FEE = 0.5;
 
 export function FareCalculator() {
   const [distanceKm, setDistanceKm] = React.useState(8);
   const [minutes, setMinutes] = React.useState(18);
   const [surge, setSurge] = React.useState(1);
 
-  const breakdown = calculateDemoFare({ distanceKm, minutes, surge });
-  const subtotal = breakdown.base + breakdown.distance + breakdown.time;
-  const surchargeAmount = Math.max(0, breakdown.total - subtotal);
+  const rideBase = STARTTARIEF + distanceKm * PRIJS_PER_KM + minutes * PRIJS_PER_MIN;
+  const ritprijs = rideBase * surge;
+  const btw = (ritprijs * BTW_PERCENTAGE) / (100 + BTW_PERCENTAGE);
+  const platformvergoeding = ritprijs * PLATFORM_PERCENTAGE + VASTE_PLATFORM_FEE;
+  const chauffeurOntvangt = ritprijs - btw - platformvergoeding;
 
   return (
     <Card className="bg-white">
@@ -70,21 +78,11 @@ export function FareCalculator() {
 
       {/* Price breakdown */}
       <div className="mt-8">
-        <div className="flex items-start justify-between gap-6">
-          <div>
-            <h3 className="text-sm font-semibold text-black">Geschatte totaalprijs</h3>
-            <p className="mt-1 text-xs text-black/50">Mock currency: EUR</p>
-          </div>
-          <div className="text-right">
-            <div className="text-3xl font-semibold tracking-tight text-black">€{breakdown.total.toFixed(2)}</div>
-            <div className="mt-1 text-xs text-black/50">Toeslag × {breakdown.surgeMultiplier.toFixed(1)}</div>
-          </div>
-        </div>
-
         <div className="mt-6 grid gap-2 text-sm text-black/70">
-          <Row label="Subtotaal" value={`€${subtotal.toFixed(2)}`} />
-          <Row label="Eventuele toeslag" value={`€${surchargeAmount.toFixed(2)}`} />
-          <Row label="Totaalprijs" value={`€${breakdown.total.toFixed(2)}`} />
+          <Row label="Geschatte totaalprijs (incl. btw)" value={`€${Number(ritprijs).toFixed(2)}`} />
+          <Row label="BTW-bedrag" value={`€${Number(btw).toFixed(2)}`} />
+          <Row label="Platformvergoeding" value={`€${Number(platformvergoeding).toFixed(2)}`} />
+          <Row label="Chauffeur ontvangt" value={`€${Number(chauffeurOntvangt).toFixed(2)}`} />
         </div>
       </div>
     </Card>
