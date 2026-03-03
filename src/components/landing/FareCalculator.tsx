@@ -67,18 +67,18 @@ export function FareCalculator() {
           <div className="flex items-start justify-between gap-6">
             <div>
               <h3 className="text-sm font-semibold text-black">Estimated total</h3>
-              <p className="mt-1 text-xs text-black/50">Mock currency: GBP</p>
+              <p className="mt-1 text-xs text-black/50">Mock currency: EUR</p>
             </div>
             <div className="text-right">
-              <div className="text-3xl font-semibold tracking-tight text-black">£{breakdown.total.toFixed(2)}</div>
+              <div className="text-3xl font-semibold tracking-tight text-black">€{breakdown.total.toFixed(2)}</div>
               <div className="mt-1 text-xs text-black/50">Surge × {breakdown.surgeMultiplier.toFixed(1)}</div>
             </div>
           </div>
 
           <div className="mt-6 grid gap-2 text-sm text-black/70">
-            <Row label="Base" value={`£${breakdown.base.toFixed(2)}`} />
-            <Row label="Distance" value={`£${breakdown.distance.toFixed(2)}`} />
-            <Row label="Time" value={`£${breakdown.time.toFixed(2)}`} />
+            <Row label="Base" value={`€${breakdown.base.toFixed(2)}`} />
+            <Row label="Distance" value={`€${breakdown.distance.toFixed(2)}`} />
+            <Row label="Time" value={`€${breakdown.time.toFixed(2)}`} />
           </div>
 
           <div className="mt-6 border-t border-black/10 pt-4 text-xs text-black/50">

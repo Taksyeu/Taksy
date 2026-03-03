@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { FareCalculator } from '@/components/landing/FareCalculator';
+
 type Metric = {
   value: string;
   label: string;
@@ -52,13 +54,8 @@ export function TrackRecordSection() {
 
         {/* Image + text */}
         <div className="mt-16 grid grid-cols-1 items-start gap-12 lg:grid-cols-2">
-          <div className="w-full overflow-hidden bg-black/[0.04]">
-            {/* Placeholder image (easy to swap later) */}
-            <img
-              src="/placeholders/city-aerial-bw.svg"
-              alt="City aerial placeholder"
-              className="h-full w-full object-cover"
-            />
+          <div className="w-full">
+            <FareCalculator />
           </div>
 
           <div className="w-full max-w-[584px]">
