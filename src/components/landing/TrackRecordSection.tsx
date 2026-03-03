@@ -64,14 +64,13 @@ export function TrackRecordSection() {
             </h3>
 
             <p className="mt-4 text-pretty text-base leading-relaxed text-black/70">
-              In 2018 ben ik AfariCab gestart als zzp’er en actief geworden als chauffeur binnen Uber en later ook
-              Bolt. Na duizenden ritten werd duidelijk wat goed werkt binnen bestaande taxiplatforms, maar ook
-              waar chauffeurs vastlopen door beperkte ruimte voor stabiliteit, keuze en voorspelbaarheid. Die
-              praktijkervaring liet zien dat de techniek vaak klopt, maar het model niet altijd meebeweegt met de
-              realiteit van chauffeurs en reizigers. Vanuit dat inzicht ontstond TAKSY. Geen breuk met wat bestaat,
-              maar een doorontwikkeling die voortbouwt op bewezen systemen, met andere uitgangspunten. Minder
-              druk per rit, meer overzicht en een platform waarin chauffeurs en reizigers centraal staan. TAKSY wordt
-              gebouwd door iemand die het werk kent, omdat hij het zelf jarenlang heeft gedaan.
+              In 2018 ben ik AfariCab gestart als zzp’er en actief geworden als chauffeur binnen Uber en later ook Bolt. Na duizenden ritten werd duidelijk wat goed werkt binnen bestaande taxiplatforms, maar ook waar chauffeurs vastlopen door beperkte ruimte voor stabiliteit, keuze en voorspelbaarheid.
+            </p>
+            <p className="mt-4 text-pretty text-base leading-relaxed text-black/70">
+              Die praktijkervaring liet zien dat de techniek vaak klopt, maar het model niet altijd meebeweegt met de realiteit van chauffeurs en reizigers. Vanuit dat inzicht ontstond TAKSY. Geen breuk met wat bestaat, maar een doorontwikkeling die voortbouwt op bewezen systemen, met andere uitgangspunten.
+            </p>
+            <p className="mt-4 text-pretty text-base leading-relaxed text-black/70">
+              Minder druk per rit, meer overzicht en een platform waarin chauffeurs en reizigers centraal staan. TAKSY wordt gebouwd door iemand die het werk kent, omdat hij het zelf jarenlang heeft gedaan.
             </p>
 
             <div className="mt-6 h-px w-full bg-black/10" />
