@@ -90,7 +90,7 @@ export function FareCalculator() {
           <div className="h-px w-full bg-black/10" />
 
           <Row label="BTW-bedrag" value={`€${Number(btw).toFixed(2)}`} />
-          <Row label="Taxi vergoeding" value={`€${Number(platformvergoeding).toFixed(2)}`} />
+          <Row label="Taksy Fee" value={`€${Number(platformvergoeding).toFixed(2)}`} />
           <Row label="Chauffeur ontvangt" value={`€${Number(chauffeurOntvangt).toFixed(2)}`} />
         </div>
       </div>
