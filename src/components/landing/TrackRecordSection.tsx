@@ -16,7 +16,7 @@ const metrics: Metric[] = [
 
 export function TrackRecordSection() {
   return (
-    <section className="w-full bg-white">
+    <section id="portfolio" className="w-full bg-white">
       <div className="mx-auto w-full max-w-[1280px] px-4 py-16 sm:px-6 lg:px-8">
         {/* Intro */}
         <div className="mx-auto flex w-full max-w-[794px] flex-col items-start text-left">
