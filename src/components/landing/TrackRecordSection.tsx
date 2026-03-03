@@ -43,13 +43,14 @@ export function TrackRecordSection() {
               className={
                 'flex flex-col items-center justify-center py-8 text-center md:px-6 lg:px-8' +
                 // Base + md: 2x2 grid with a "+" divider layout (no outer borders)
-                (idx % 2 === 0 ? ' border-r border-black/10 lg:border-r-0' : '') +
-                (idx >= 2 ? ' border-t border-black/10 lg:border-t-0' : '') +
-                // lg: 4 columns with 3 vertical dividers (no outer borders)
-                (idx < 3 ? ' lg:border-r lg:border-black/10' : '')
+                (idx % 2 === 0 ? ' border-r border-black/10' : '') +
+                (idx >= 2 ? ' border-t border-black/10' : '') +
+                // lg: reset base borders, then add 3 inner vertical dividers (no outer edges)
+                ' lg:border-0' +
+                (idx > 0 ? ' lg:border-l lg:border-black/10' : '')
               }
             >
-              <div className="text-[16px] font-normal leading-[24px] text-black md:text-[30px] md:font-bold md:leading-[36px] lg:text-[48px] lg:leading-[48px]">
+              <div className="text-[16px] font-bold leading-[24px] text-black md:text-[30px] md:font-bold md:leading-[36px] lg:text-[48px] lg:leading-[48px]">
                 {metric.value}
               </div>
               <div className="mt-3 text-xs font-medium uppercase tracking-wider text-black/50">{metric.label}</div>
