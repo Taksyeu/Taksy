@@ -17,18 +17,20 @@ export function TrackRecordSection() {
     <section className="w-full bg-white">
       <div className="mx-auto w-full max-w-[1280px] px-4 py-16 sm:px-6 lg:px-8">
         {/* Intro */}
-        <div className="flex w-full flex-col items-start text-left">
+        <div className="mx-auto flex w-full max-w-[794px] flex-col items-start text-left">
           <div className="mb-4 text-xs uppercase tracking-widest text-black/50">TRACK RECORD</div>
 
           <h2 className="text-balance text-[36px] font-bold leading-[39.6px] tracking-tight text-black lg:text-[48px] lg:leading-[50.4px]">
             Gebouwd op Praktijkervaring
           </h2>
 
-          <p className="mt-3 text-pretty text-base leading-relaxed text-black/70">
-            TAKSY is geboren uit praktijkervaring — niet uit theorie. De basis van het platform ligt in jarenlange
-            ervaring als chauffeur, opgebouwd onder de naam AfariCab en dagelijks gewerkt binnen bestaande
-            taxiplatforms zoals Uber en Bolt.
-          </p>
+          <div className="max-w-[576px]">
+            <p className="mt-3 text-pretty text-base leading-relaxed text-black/70">
+              TAKSY is geboren uit praktijkervaring — niet uit theorie. De basis van het platform ligt in jarenlange
+              ervaring als chauffeur, opgebouwd onder de naam AfariCab en dagelijks gewerkt binnen bestaande
+              taxiplatforms zoals Uber en Bolt.
+            </p>
+          </div>
         </div>
 
         {/* Metrics */}
