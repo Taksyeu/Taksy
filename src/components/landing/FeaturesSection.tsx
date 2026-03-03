@@ -52,7 +52,7 @@ export function FeaturesSection() {
             02
           </div>
 
-          <div className="mx-0 flex w-full max-w-[794px] flex-col items-start text-left lg:mx-0 lg:items-start lg:text-left xl:mx-auto">
+          <div className="mx-0 flex w-full max-w-[794px] flex-col items-start text-left lg:mx-auto lg:items-start lg:text-left">
             <div className="mb-4 text-xs uppercase tracking-widest text-black/50">
               PLATFORM MOGELIJKHEDEN
             </div>
