@@ -4,6 +4,7 @@ import { FareCalculator } from '@/components/landing/FareCalculator';
 import { HeroBooking } from '@/components/landing/HeroBooking';
 import { FeaturesSection } from '@/components/landing/FeaturesSection';
 import { SponsorTiers } from '@/components/landing/SponsorTiers';
+import { TrackRecordSection } from '@/components/landing/TrackRecordSection';
 
 export default function Page() {
   return (
@@ -46,6 +47,8 @@ export default function Page() {
       </section>
 
       <FeaturesSection />
+
+      <TrackRecordSection />
 
       <Section id="calculator" tone="white">
         <FareCalculator />
