@@ -50,7 +50,7 @@ export function TrackRecordSection() {
                 (idx > 0 ? ' lg:border-l lg:border-black/10' : '')
               }
             >
-              <div className="text-[16px] font-bold leading-[24px] text-black md:text-[30px] md:font-bold md:leading-[36px] lg:text-[48px] lg:leading-[48px]">
+              <div className="text-[25px] font-bold leading-[24px] text-black md:text-[30px] md:font-bold md:leading-[36px] lg:text-[48px] lg:leading-[48px]">
                 {metric.value}
               </div>
               <div className="mt-3 text-xs font-medium uppercase tracking-wider text-black/50">{metric.label}</div>
