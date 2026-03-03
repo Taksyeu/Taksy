@@ -79,7 +79,15 @@ export function FareCalculator() {
       {/* Price breakdown */}
       <div className="mt-8">
         <div className="mt-6 grid gap-2 text-sm text-black/70">
-          <Row label="Geschatte totaalprijs (incl. btw)" value={`€${Number(ritprijs).toFixed(2)}`} />
+          <div className="flex items-center justify-between">
+            <span>
+              <span className="font-semibold text-black">Geschatte totaalprijs</span>{' '}
+              <span className="font-normal text-black/50">(incl. btw)</span>
+            </span>
+            <span className="font-mono text-[30px] font-semibold leading-none text-black">
+              € {Number(ritprijs).toFixed(2)}
+            </span>
+          </div>
           <Row label="BTW-bedrag" value={`€${Number(btw).toFixed(2)}`} />
           <Row label="Platformvergoeding" value={`€${Number(platformvergoeding).toFixed(2)}`} />
           <Row label="Chauffeur ontvangt" value={`€${Number(chauffeurOntvangt).toFixed(2)}`} />
