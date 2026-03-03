@@ -74,8 +74,6 @@ export function FareCalculator() {
         Deze calculator is bewust eenvoudig en transparant. Geen verborgen kosten, geen backend.
       </p>
 
-      <div className="mt-8 h-px w-full bg-black/10" />
-
       {/* Price breakdown */}
       <div className="mt-8">
         <div className="mt-6 grid gap-2 text-sm text-black/70">
@@ -84,12 +82,15 @@ export function FareCalculator() {
               <span className="font-semibold text-black">Geschatte totaalprijs</span>{' '}
               <span className="font-normal text-black/50">(incl. btw)</span>
             </span>
-            <span className="font-mono text-[30px] font-semibold leading-none text-black">
-              € {Number(ritprijs).toFixed(2)}
+            <span className="font-mono text-[20px] font-semibold leading-none text-black lg:text-[25px]">
+              €{Number(ritprijs).toFixed(2)}
             </span>
           </div>
+
+          <div className="h-px w-full bg-black/10" />
+
           <Row label="BTW-bedrag" value={`€${Number(btw).toFixed(2)}`} />
-          <Row label="Platformvergoeding" value={`€${Number(platformvergoeding).toFixed(2)}`} />
+          <Row label="Taxi vergoeding" value={`€${Number(platformvergoeding).toFixed(2)}`} />
           <Row label="Chauffeur ontvangt" value={`€${Number(chauffeurOntvangt).toFixed(2)}`} />
         </div>
       </div>
