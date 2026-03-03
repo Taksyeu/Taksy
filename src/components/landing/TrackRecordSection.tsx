@@ -36,17 +36,22 @@ export function TrackRecordSection() {
         </div>
 
         {/* Metrics */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
           {metrics.map((metric, idx) => (
             <div
               key={metric.label}
               className={
-                'py-8 md:px-6 lg:px-8' +
-                (idx < 3 ? ' lg:border-r lg:border-black/10' : '') +
-                (idx >= 2 ? ' md:border-t md:border-black/10 lg:border-t-0' : '')
+                'flex flex-col items-center justify-center py-8 text-center md:px-6 lg:px-8' +
+                // Base + md: 2x2 grid with a "+" divider layout (no outer borders)
+                (idx % 2 === 0 ? ' border-r border-black/10 lg:border-r-0' : '') +
+                (idx >= 2 ? ' border-t border-black/10 lg:border-t-0' : '') +
+                // lg: 4 columns with 3 vertical dividers (no outer borders)
+                (idx < 3 ? ' lg:border-r lg:border-black/10' : '')
               }
             >
-              <div className="text-[48px] font-bold leading-[48px] text-black">{metric.value}</div>
+              <div className="text-[16px] font-normal leading-[24px] text-black md:text-[30px] md:font-bold md:leading-[36px] lg:text-[48px] lg:leading-[48px]">
+                {metric.value}
+              </div>
               <div className="mt-3 text-xs font-medium uppercase tracking-wider text-black/50">{metric.label}</div>
             </div>
           ))}
