@@ -11,6 +11,11 @@ import { auth } from '@/lib/firebase/client';
 import { createUserDocument } from '@/lib/firebase/users';
 import { UserRole, type User } from '@/types/user';
 
+function requireAuth() {
+  if (!auth) throw new Error('Firebase Auth is not initialized. Check NEXT_PUBLIC_FIREBASE_* env vars.');
+  return auth;
+}
+
 export type RegisterUserInput = {
   email: string;
   password: string;
@@ -22,7 +27,8 @@ export type RegisterUserInput = {
  * Send a verification email to the given user (or the current authed user).
  */
 export async function sendVerificationEmail(user?: FirebaseUser): Promise<void> {
-  const target = user ?? auth.currentUser;
+  const a = requireAuth();
+  const target = user ?? a.currentUser;
   if (!target) throw new Error('No authenticated user to verify.');
   await sendEmailVerification(target);
 }
@@ -36,7 +42,8 @@ export async function sendVerificationEmail(user?: FirebaseUser): Promise<void> 
 export async function registerUser(input: RegisterUserInput): Promise<FirebaseUser> {
   const { email, password, fullName, phoneNumber = null } = input;
 
-  const cred = await createUserWithEmailAndPassword(auth, email, password);
+  const a = requireAuth();
+  const cred = await createUserWithEmailAndPassword(a, email, password);
   const user = cred.user;
 
   // Fire-and-forget is tempting, but keep it awaited so calling code can show state accurately.
@@ -61,7 +68,8 @@ export async function registerUser(input: RegisterUserInput): Promise<FirebaseUs
  * Login with email + password.
  */
 export async function loginUser(email: string, password: string): Promise<FirebaseUser> {
-  const cred = await signInWithEmailAndPassword(auth, email, password);
+  const a = requireAuth();
+  const cred = await signInWithEmailAndPassword(a, email, password);
   return cred.user;
 }
 
@@ -69,5 +77,6 @@ export async function loginUser(email: string, password: string): Promise<Fireba
  * Logout the current user.
  */
 export async function logoutUser(): Promise<void> {
-  await signOut(auth);
+  const a = requireAuth();
+  await signOut(a);
 }
