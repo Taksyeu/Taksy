@@ -23,3 +23,4 @@ Then open: http://localhost:3000
 This repo currently contains a production-ready skeleton UI and demo logic only.
 Integration wiring (Firebase auth/data + Stripe billing) will be done in later phases.
 
+
