@@ -60,7 +60,7 @@ export function subscribeToDriverActiveRide(
   const q = query(
     collection(db, 'rides'),
     where('driverId', '==', driverId),
-    where('status', 'in', ['ACCEPTED', 'IN_PROGRESS']),
+    where('status', 'in', ['ACCEPTED', 'DRIVER_ARRIVING', 'IN_PROGRESS']),
     limit(1)
   );
 

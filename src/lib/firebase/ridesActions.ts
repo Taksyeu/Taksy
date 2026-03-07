@@ -17,6 +17,15 @@ export async function acceptRide(rideId: string, driverId: string): Promise<void
   });
 }
 
+export async function arriveAtPickup(rideId: string): Promise<void> {
+  const db = requireFirestore();
+  const ref = doc(db, 'rides', rideId);
+
+  await updateDoc(ref, {
+    status: 'DRIVER_ARRIVING',
+  });
+}
+
 export async function startRide(rideId: string): Promise<void> {
   const db = requireFirestore();
   const ref = doc(db, 'rides', rideId);

@@ -3,7 +3,7 @@
 import * as React from 'react';
 
 import { useAuth } from '@/context/AuthContext';
-import { acceptRide, completeRide, startRide } from '@/lib/firebase/ridesActions';
+import { acceptRide, arriveAtPickup, completeRide, startRide } from '@/lib/firebase/ridesActions';
 import {
   subscribeToDriverActiveRide,
   subscribeToRequestedRides,
@@ -19,6 +19,7 @@ export default function DriverPage() {
   const [error, setError] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState<string | null>(null);
   const [acceptingRideId, setAcceptingRideId] = React.useState<string | null>(null);
+  const [arrivingRideId, setArrivingRideId] = React.useState<string | null>(null);
   const [startingRideId, setStartingRideId] = React.useState<string | null>(null);
   const [completingRideId, setCompletingRideId] = React.useState<string | null>(null);
 
@@ -107,6 +108,27 @@ export default function DriverPage() {
     }
   }
 
+  async function onArriveAtPickup(rideId: string) {
+    setError(null);
+    setSuccess(null);
+
+    if (!firebaseUser) {
+      setError('You must be logged in to update ride status.');
+      return;
+    }
+
+    try {
+      setArrivingRideId(rideId);
+      await arriveAtPickup(rideId);
+      // UI updates via onSnapshot.
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to update ride status.';
+      setError(message);
+    } finally {
+      setArrivingRideId(null);
+    }
+  }
+
   async function onStartRide(rideId: string) {
     setError(null);
     setSuccess(null);
@@ -189,6 +211,19 @@ export default function DriverPage() {
             </div>
 
             {activeRide.status === 'ACCEPTED' ? (
+              <div className="mt-4">
+                <button
+                  type="button"
+                  onClick={() => onArriveAtPickup(activeRide.id)}
+                  disabled={arrivingRideId === activeRide.id}
+                  className="inline-flex w-full items-center justify-center rounded-xl bg-white px-3 py-2.5 text-sm font-semibold text-neutral-950 transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {arrivingRideId === activeRide.id ? 'Updating…' : 'Arrive at Pickup'}
+                </button>
+              </div>
+            ) : null}
+
+            {activeRide.status === 'DRIVER_ARRIVING' ? (
               <div className="mt-4">
                 <button
                   type="button"
