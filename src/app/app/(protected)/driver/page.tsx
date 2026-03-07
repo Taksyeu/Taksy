@@ -2,12 +2,18 @@
 
 import * as React from 'react';
 
+import { useAuth } from '@/context/AuthContext';
+import { acceptRide } from '@/lib/firebase/ridesActions';
 import { subscribeToRequestedRides, type RideRequest } from '@/lib/firebase/ridesFeed';
 
 export default function DriverPage() {
+  const { firebaseUser } = useAuth();
+
   const [rides, setRides] = React.useState<RideRequest[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+  const [success, setSuccess] = React.useState<string | null>(null);
+  const [acceptingRideId, setAcceptingRideId] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     setLoading(true);
@@ -37,6 +43,28 @@ export default function DriverPage() {
     };
   }, []);
 
+  async function onAcceptRide(rideId: string) {
+    setError(null);
+    setSuccess(null);
+
+    if (!firebaseUser) {
+      setError('You must be logged in to accept a ride.');
+      return;
+    }
+
+    try {
+      setAcceptingRideId(rideId);
+      await acceptRide(rideId, firebaseUser.uid);
+      setSuccess('Ride accepted.');
+      // Ride will automatically disappear from the list because the feed filters REQUESTED.
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to accept ride.';
+      setError(message);
+    } finally {
+      setAcceptingRideId(null);
+    }
+  }
+
   return (
     <div className="mx-auto w-full max-w-[720px] space-y-6">
       <header className="space-y-1">
@@ -47,6 +75,12 @@ export default function DriverPage() {
       {error ? (
         <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-100">
           {error}
+        </div>
+      ) : null}
+
+      {success ? (
+        <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm text-emerald-100">
+          {success}
         </div>
       ) : null}
 
@@ -78,11 +112,12 @@ export default function DriverPage() {
               <div className="mt-4">
                 <button
                   type="button"
-                  className="inline-flex w-full items-center justify-center rounded-xl bg-white px-3 py-2.5 text-sm font-semibold text-neutral-950 transition hover:bg-white/90"
+                  onClick={() => onAcceptRide(ride.id)}
+                  disabled={acceptingRideId === ride.id}
+                  className="inline-flex w-full items-center justify-center rounded-xl bg-white px-3 py-2.5 text-sm font-semibold text-neutral-950 transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-70"
                 >
-                  Accept Ride
+                  {acceptingRideId === ride.id ? 'Accepting…' : 'Accept Ride'}
                 </button>
-                <p className="mt-2 text-xs text-white/50">Button is UI-only for now (no matching/assignment yet).</p>
               </div>
             </div>
           ))}
