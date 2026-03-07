@@ -1,9 +1,56 @@
+'use client';
+
+import * as React from 'react';
+
+import { useAuth } from '@/context/AuthContext';
+import { createRideRequest } from '@/lib/firebase/rides';
+
 export default function CustomerPage() {
+  const { firebaseUser } = useAuth();
+
+  const [pickupLocation, setPickupLocation] = React.useState('');
+  const [destination, setDestination] = React.useState('');
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [success, setSuccess] = React.useState(false);
+
+  async function onRequestRide() {
+    setError(null);
+    setSuccess(false);
+
+    if (!firebaseUser) {
+      setError('You must be logged in to request a ride.');
+      return;
+    }
+
+    const pickup = pickupLocation.trim();
+    const dest = destination.trim();
+
+    if (!pickup || !dest) {
+      setError('Please enter both pickup location and destination.');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      await createRideRequest({
+        riderId: firebaseUser.uid,
+        pickupLocation: pickup,
+        destination: dest,
+      });
+      setSuccess(true);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to create ride request.';
+      setError(message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
     <div className="mx-auto w-full max-w-[520px] space-y-6">
       <header className="space-y-1">
         <h1 className="text-2xl font-semibold tracking-tight">Customer Dashboard</h1>
-        <p className="text-sm text-white/60">Request rides and track your recent activity.</p>
       </header>
 
       <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
@@ -21,6 +68,8 @@ export default function CustomerPage() {
               name="pickup"
               type="text"
               inputMode="text"
+              value={pickupLocation}
+              onChange={(e) => setPickupLocation(e.target.value)}
               placeholder="e.g. 221B Baker Street"
               className="w-full rounded-xl border border-white/10 bg-neutral-950 px-3 py-2.5 text-sm text-white outline-none ring-offset-neutral-950 placeholder:text-white/30 focus:ring-2 focus:ring-white/20"
             />
@@ -35,19 +84,35 @@ export default function CustomerPage() {
               name="destination"
               type="text"
               inputMode="text"
+              value={destination}
+              onChange={(e) => setDestination(e.target.value)}
               placeholder="e.g. Heathrow Terminal 5"
               className="w-full rounded-xl border border-white/10 bg-neutral-950 px-3 py-2.5 text-sm text-white outline-none ring-offset-neutral-950 placeholder:text-white/30 focus:ring-2 focus:ring-white/20"
             />
           </div>
 
+          {error ? (
+            <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-100">
+              {error}
+            </div>
+          ) : null}
+
+          {success ? (
+            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-100">
+              Ride request created.
+            </div>
+          ) : null}
+
           <button
             type="button"
-            className="inline-flex w-full items-center justify-center rounded-xl bg-white px-3 py-2.5 text-sm font-semibold text-neutral-950 transition hover:bg-white/90"
+            onClick={onRequestRide}
+            disabled={isSubmitting}
+            className="inline-flex w-full items-center justify-center rounded-xl bg-white px-3 py-2.5 text-sm font-semibold text-neutral-950 transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-70"
           >
-            Request Ride
+            {isSubmitting ? 'Requesting…' : 'Request Ride'}
           </button>
 
-          <p className="text-xs text-white/50">UI only (no ride logic yet).</p>
+          <p className="text-xs text-white/50">No driver matching yet — this only creates a ride request.</p>
         </div>
       </section>
 
