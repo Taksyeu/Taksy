@@ -1,13 +1,26 @@
 'use client';
 
+import * as React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
 
+import { useAuth } from '@/context/AuthContext';
 import { loginUser } from '@/lib/firebase/auth';
+import { getRoleHomePath } from '@/lib/roleRedirect';
 
 export function LoginForm() {
   const router = useRouter();
+  const { firebaseUser, platformUser, loading } = useAuth();
+
+  // If the user is already signed in, don't show the login form — send them to their role area.
+  React.useEffect(() => {
+    if (loading) return;
+    if (!firebaseUser) return;
+
+    const target = getRoleHomePath(platformUser?.role);
+    router.replace(target);
+  }, [firebaseUser, loading, platformUser?.role, router]);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -88,7 +101,7 @@ export function LoginForm() {
           </button>
 
           <div className="pt-1 text-center text-sm text-white/70">
-            <span>Don't have an account? </span>
+            <span>Don&apos;t have an account? </span>
             <Link
               href="/app/register"
               className="font-medium text-white underline underline-offset-4 hover:text-white/90"
