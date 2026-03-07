@@ -4,13 +4,20 @@ import * as React from 'react';
 
 import { useAuth } from '@/context/AuthContext';
 import { createRideRequest } from '@/lib/firebase/rides';
-import { subscribeToRiderLatestRide, type RiderLatestRide } from '@/lib/firebase/riderRide';
+import {
+  subscribeToRiderLatestRide,
+  subscribeToRiderRideHistory,
+  type RiderLatestRide,
+  type RiderRideHistoryItem,
+} from '@/lib/firebase/riderRide';
 
 export default function CustomerPage() {
   const { firebaseUser, loading: authLoading } = useAuth();
 
   const [currentRide, setCurrentRide] = React.useState<RiderLatestRide | null>(null);
   const [rideLoading, setRideLoading] = React.useState(true);
+
+  const [rideHistory, setRideHistory] = React.useState<RiderRideHistoryItem[]>([]);
 
   const [pickupLocation, setPickupLocation] = React.useState('');
   const [destination, setDestination] = React.useState('');
@@ -25,14 +32,16 @@ export default function CustomerPage() {
 
     if (!firebaseUser) {
       setCurrentRide(null);
+      setRideHistory([]);
       setRideLoading(false);
       return;
     }
 
-    let unsub: (() => void) | null = null;
+    let unsubLatest: (() => void) | null = null;
+    let unsubHistory: (() => void) | null = null;
 
     try {
-      unsub = subscribeToRiderLatestRide(
+      unsubLatest = subscribeToRiderLatestRide(
         firebaseUser.uid,
         (ride) => {
           setCurrentRide(ride);
@@ -43,14 +52,25 @@ export default function CustomerPage() {
           setRideLoading(false);
         }
       );
+
+      unsubHistory = subscribeToRiderRideHistory(
+        firebaseUser.uid,
+        (rides) => {
+          setRideHistory(rides);
+        },
+        (err) => {
+          setError(err.message);
+        }
+      );
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to load current ride.';
+      const message = err instanceof Error ? err.message : 'Failed to load rides.';
       setError(message);
       setRideLoading(false);
     }
 
     return () => {
-      unsub?.();
+      unsubLatest?.();
+      unsubHistory?.();
     };
   }, [authLoading, firebaseUser]);
 
@@ -86,6 +106,24 @@ export default function CustomerPage() {
       setIsSubmitting(false);
     }
   }
+
+  const visibleHistory = React.useMemo(() => {
+    const currentId = currentRide?.id;
+    const currentStatus = currentRide?.status;
+
+    return rideHistory.filter((ride) => {
+      if (!currentId) return true;
+      if (ride.id !== currentId) return true;
+      // Exclude the current active ride from history until it is completed.
+      return currentStatus === 'COMPLETED';
+    });
+  }, [currentRide?.id, currentRide?.status, rideHistory]);
+
+  const formatCreatedAt = React.useCallback((createdAt: RiderRideHistoryItem['createdAt']) => {
+    if (!createdAt) return '—';
+    const date = createdAt.toDate();
+    return new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'short' }).format(date);
+  }, []);
 
   return (
     <div className="mx-auto w-full max-w-[520px] space-y-6">
@@ -182,6 +220,43 @@ export default function CustomerPage() {
           </div>
         </section>
       )}
+
+      {firebaseUser ? (
+        <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
+          <div className="mb-3">
+            <h2 className="text-sm font-semibold text-white/90">Ride History</h2>
+          </div>
+
+          {visibleHistory.length === 0 ? (
+            <div className="text-sm text-white/60">No ride history yet.</div>
+          ) : (
+            <div className="space-y-3">
+              {visibleHistory.map((ride) => (
+                <div key={ride.id} className="rounded-xl border border-white/10 bg-neutral-950/40 p-3">
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    <div>
+                      <div className="text-[11px] font-medium text-white/60">Pickup</div>
+                      <div className="text-sm text-white/90">{ride.pickupLocation || '—'}</div>
+                    </div>
+                    <div>
+                      <div className="text-[11px] font-medium text-white/60">Destination</div>
+                      <div className="text-sm text-white/90">{ride.destination || '—'}</div>
+                    </div>
+                    <div>
+                      <div className="text-[11px] font-medium text-white/60">Status</div>
+                      <div className="text-sm text-white/90">{ride.status || '—'}</div>
+                    </div>
+                    <div>
+                      <div className="text-[11px] font-medium text-white/60">Created</div>
+                      <div className="text-sm text-white/90">{formatCreatedAt(ride.createdAt)}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      ) : null}
 
       {rideLoading ? <div className="text-sm text-white/60">Loading…</div> : null}
     </div>
