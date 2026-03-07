@@ -1,5 +1,6 @@
 import {
   collection,
+  limit,
   onSnapshot,
   query,
   where,
@@ -49,4 +50,42 @@ export function subscribeToRequestedRides(
   );
 }
 
+export function subscribeToDriverActiveRide(
+  driverId: string,
+  onData: (ride: RideRequest | null) => void,
+  onError?: (error: Error) => void
+): Unsubscribe {
+  const db = requireFirestore();
+
+  const q = query(
+    collection(db, 'rides'),
+    where('driverId', '==', driverId),
+    where('status', '==', 'ACCEPTED'),
+    limit(1)
+  );
+
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const docSnap = snapshot.docs[0];
+      if (!docSnap) {
+        onData(null);
+        return;
+      }
+
+      const data = docSnap.data() as Partial<RideRequest>;
+      onData({
+        id: docSnap.id,
+        pickupLocation: data.pickupLocation ?? '',
+        destination: data.destination ?? '',
+        status: data.status ?? '',
+      });
+    },
+    (err) => {
+      onError?.(err instanceof Error ? err : new Error('Failed to subscribe to active ride'));
+    }
+  );
+}
+
 export type { RideRequest };
+
