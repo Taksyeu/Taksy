@@ -3,7 +3,7 @@
 import * as React from 'react';
 
 import { useAuth } from '@/context/AuthContext';
-import { acceptRide } from '@/lib/firebase/ridesActions';
+import { acceptRide, startRide } from '@/lib/firebase/ridesActions';
 import {
   subscribeToDriverActiveRide,
   subscribeToRequestedRides,
@@ -19,6 +19,7 @@ export default function DriverPage() {
   const [error, setError] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState<string | null>(null);
   const [acceptingRideId, setAcceptingRideId] = React.useState<string | null>(null);
+  const [startingRideId, setStartingRideId] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     // Wait for auth resolution so we have the driver's uid.
@@ -105,6 +106,27 @@ export default function DriverPage() {
     }
   }
 
+  async function onStartRide(rideId: string) {
+    setError(null);
+    setSuccess(null);
+
+    if (!firebaseUser) {
+      setError('You must be logged in to start a ride.');
+      return;
+    }
+
+    try {
+      setStartingRideId(rideId);
+      await startRide(rideId);
+      // UI updates via onSnapshot.
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to start ride.';
+      setError(message);
+    } finally {
+      setStartingRideId(null);
+    }
+  }
+
   return (
     <div className="mx-auto w-full max-w-[720px] space-y-6">
       <header className="space-y-1">
@@ -143,6 +165,19 @@ export default function DriverPage() {
                 <div className="text-sm text-white/90">{activeRide.status || '—'}</div>
               </div>
             </div>
+
+            {activeRide.status === 'ACCEPTED' ? (
+              <div className="mt-4">
+                <button
+                  type="button"
+                  onClick={() => onStartRide(activeRide.id)}
+                  disabled={startingRideId === activeRide.id}
+                  className="inline-flex w-full items-center justify-center rounded-xl bg-white px-3 py-2.5 text-sm font-semibold text-neutral-950 transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {startingRideId === activeRide.id ? 'Starting…' : 'Start Ride'}
+                </button>
+              </div>
+            ) : null}
           </div>
         </section>
       ) : (

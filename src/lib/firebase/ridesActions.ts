@@ -16,3 +16,12 @@ export async function acceptRide(rideId: string, driverId: string): Promise<void
     driverId,
   });
 }
+
+export async function startRide(rideId: string): Promise<void> {
+  const db = requireFirestore();
+  const ref = doc(db, 'rides', rideId);
+
+  await updateDoc(ref, {
+    status: 'IN_PROGRESS',
+  });
+}
