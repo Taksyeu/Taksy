@@ -25,3 +25,12 @@ export async function startRide(rideId: string): Promise<void> {
     status: 'IN_PROGRESS',
   });
 }
+
+export async function completeRide(rideId: string): Promise<void> {
+  const db = requireFirestore();
+  const ref = doc(db, 'rides', rideId);
+
+  await updateDoc(ref, {
+    status: 'COMPLETED',
+  });
+}

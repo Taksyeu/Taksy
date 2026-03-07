@@ -3,7 +3,7 @@
 import * as React from 'react';
 
 import { useAuth } from '@/context/AuthContext';
-import { acceptRide, startRide } from '@/lib/firebase/ridesActions';
+import { acceptRide, completeRide, startRide } from '@/lib/firebase/ridesActions';
 import {
   subscribeToDriverActiveRide,
   subscribeToRequestedRides,
@@ -20,6 +20,7 @@ export default function DriverPage() {
   const [success, setSuccess] = React.useState<string | null>(null);
   const [acceptingRideId, setAcceptingRideId] = React.useState<string | null>(null);
   const [startingRideId, setStartingRideId] = React.useState<string | null>(null);
+  const [completingRideId, setCompletingRideId] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     // Wait for auth resolution so we have the driver's uid.
@@ -127,6 +128,27 @@ export default function DriverPage() {
     }
   }
 
+  async function onCompleteRide(rideId: string) {
+    setError(null);
+    setSuccess(null);
+
+    if (!firebaseUser) {
+      setError('You must be logged in to complete a ride.');
+      return;
+    }
+
+    try {
+      setCompletingRideId(rideId);
+      await completeRide(rideId);
+      // After completion the active ride subscription will return null and the feed will reappear.
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to complete ride.';
+      setError(message);
+    } finally {
+      setCompletingRideId(null);
+    }
+  }
+
   return (
     <div className="mx-auto w-full max-w-[720px] space-y-6">
       <header className="space-y-1">
@@ -175,6 +197,19 @@ export default function DriverPage() {
                   className="inline-flex w-full items-center justify-center rounded-xl bg-white px-3 py-2.5 text-sm font-semibold text-neutral-950 transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-70"
                 >
                   {startingRideId === activeRide.id ? 'Starting…' : 'Start Ride'}
+                </button>
+              </div>
+            ) : null}
+
+            {activeRide.status === 'IN_PROGRESS' ? (
+              <div className="mt-4">
+                <button
+                  type="button"
+                  onClick={() => onCompleteRide(activeRide.id)}
+                  disabled={completingRideId === activeRide.id}
+                  className="inline-flex w-full items-center justify-center rounded-xl bg-white px-3 py-2.5 text-sm font-semibold text-neutral-950 transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {completingRideId === activeRide.id ? 'Completing…' : 'Complete Ride'}
                 </button>
               </div>
             ) : null}
