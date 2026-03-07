@@ -175,7 +175,7 @@ export default function CustomerPage() {
                 value={pickupLocation}
                 onChange={(e) => setPickupLocation(e.target.value)}
                 placeholder="e.g. 221B Baker Street"
-                className="w-full rounded-xl border border-white/10 bg-neutral-950 px-3 py-2.5 text-sm text-white outline-none ring-offset-neutral-950 placeholder:text-white/30 focus:ring-2 focus:ring-white/20"
+                className="w-full rounded-xl border border-white/10 bg-neutral-950 px-3 py-2.5 text-base text-white outline-none ring-offset-neutral-950 placeholder:text-white/30 focus:ring-2 focus:ring-white/20"
               />
             </div>
 
@@ -191,7 +191,7 @@ export default function CustomerPage() {
                 value={destination}
                 onChange={(e) => setDestination(e.target.value)}
                 placeholder="e.g. Heathrow Terminal 5"
-                className="w-full rounded-xl border border-white/10 bg-neutral-950 px-3 py-2.5 text-sm text-white outline-none ring-offset-neutral-950 placeholder:text-white/30 focus:ring-2 focus:ring-white/20"
+                className="w-full rounded-xl border border-white/10 bg-neutral-950 px-3 py-2.5 text-base text-white outline-none ring-offset-neutral-950 placeholder:text-white/30 focus:ring-2 focus:ring-white/20"
               />
             </div>
 
