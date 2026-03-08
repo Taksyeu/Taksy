@@ -16,7 +16,7 @@ import {
 } from '@/lib/firebase/riderRide';
 
 export default function CustomerPage() {
-  const { firebaseUser, loading: authLoading } = useAuth();
+  const { firebaseUser, platformUser, loading: authLoading } = useAuth();
 
   const [currentRide, setCurrentRide] = React.useState<RiderLatestRide | null>(null);
   const [rideLoading, setRideLoading] = React.useState(true);
@@ -443,26 +443,28 @@ export default function CustomerPage() {
             )}
           </section>
 
-          <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
-            <div className="mb-3">
-              <h2 className="text-sm font-semibold text-white/90">Become a Driver</h2>
-            </div>
-
-            {driverApplied ? (
-              <div className="mb-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-100">
-                Driver application submitted. Waiting for approval.
+          {String(platformUser?.role ?? '').toUpperCase() !== 'DRIVER' ? (
+            <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div className="mb-3">
+                <h2 className="text-sm font-semibold text-white/90">Become a Driver</h2>
               </div>
-            ) : null}
 
-            <button
-              type="button"
-              onClick={onApplyToBecomeDriver}
-              disabled={driverApplying}
-              className="inline-flex w-full items-center justify-center rounded-xl bg-white px-3 py-2.5 text-sm font-semibold text-neutral-950 transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {driverApplying ? 'Submitting…' : 'Apply to become a driver'}
-            </button>
-          </section>
+              {driverApplied ? (
+                <div className="mb-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-100">
+                  Driver application submitted. Waiting for approval.
+                </div>
+              ) : null}
+
+              <button
+                type="button"
+                onClick={onApplyToBecomeDriver}
+                disabled={driverApplying}
+                className="inline-flex w-full items-center justify-center rounded-xl bg-white px-3 py-2.5 text-sm font-semibold text-neutral-950 transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {driverApplying ? 'Submitting…' : 'Apply to become a driver'}
+              </button>
+            </section>
+          ) : null}
         </>
       ) : null}
 

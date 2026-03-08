@@ -37,7 +37,8 @@ export default function DriverPage() {
 
     // Gate driver dashboard: only approved drivers can access.
     if (firebaseUser && platformUser) {
-      const isApprovedDriver = platformUser.role === UserRole.DRIVER && platformUser.isDriverApproved === true;
+      const role = String(platformUser.role ?? '').toUpperCase();
+      const isApprovedDriver = role === UserRole.DRIVER && platformUser.isDriverApproved === true;
       if (!isApprovedDriver) {
         router.replace('/app/customer');
         return;
@@ -128,7 +129,7 @@ export default function DriverPage() {
     const isApprovedDriver =
       !!firebaseUser &&
       !!platformUser &&
-      platformUser.role === UserRole.DRIVER &&
+      String(platformUser.role ?? '').toUpperCase() === UserRole.DRIVER &&
       platformUser.isDriverApproved === true;
 
     if (!isApprovedDriver) return;
