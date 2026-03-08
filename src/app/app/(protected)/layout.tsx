@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { LogoutButton } from '@/components/auth/LogoutButton';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { RoleBasedRedirector } from '@/components/auth/RoleBasedRedirector';
 
 const nav = [
   { label: 'Home', href: '/app' },
@@ -15,6 +16,7 @@ const nav = [
 export default function PlatformProtectedLayout({ children }: { children: React.ReactNode }) {
   return (
     <ProtectedRoute>
+      <RoleBasedRedirector />
       <div className="min-h-dvh bg-neutral-950 text-neutral-50">
         <header className="border-b border-white/10 bg-neutral-950">
           <div className="mx-auto flex w-full max-w-[1280px] items-center justify-between px-4 py-4 sm:px-6 lg:px-8">

@@ -161,53 +161,69 @@ export default function CustomerPage() {
 
           const google = (window as any).google;
 
-          // Defensive: ensure Google Maps actually initialized.
-          if (!google?.maps?.DirectionsService) {
-            setEstimate(null);
-            setEstimateError('Google Maps is not correctly loaded on this page.');
-            setEstimating(false);
-            return;
-          }
-
-          const service = new google.maps.DirectionsService();
-
-          service.route(
-            {
-              origin: pickup,
-              destination: dest,
-              travelMode: google.maps.TravelMode.DRIVING,
-            },
-            (result: any, status: any) => {
-              if (cancelled) return;
-
-              if (status !== 'OK' || !result?.routes?.[0]?.legs?.[0]) {
-                setEstimate(null);
-                setEstimateError('Could not estimate route for those addresses.');
-                setEstimating(false);
-                return;
-              }
-
-              const leg = result.routes[0].legs[0];
-              const distanceMeters = leg.distance?.value as number | undefined;
-              const durationSeconds = leg.duration?.value as number | undefined;
-
-              if (typeof distanceMeters !== 'number' || typeof durationSeconds !== 'number') {
-                setEstimate(null);
-                setEstimateError('Could not estimate route distance/duration.');
-                setEstimating(false);
-                return;
-              }
-
-              const distanceKm = distanceMeters / 1000;
-              const durationMinutes = durationSeconds / 60;
-
-              // Dutch maximum taxi tariff
-              const estimatedPrice = 4.31 + distanceKm * 3.17 + durationMinutes * 0.52;
-
-              setEstimate({ distanceKm, durationMinutes, estimatedPrice });
-              setEstimating(false);
+          // Defensive: ensure DirectionsService is actually available before routing.
+          const waitForDirectionsService = async () => {
+            for (let i = 0; i < 40; i++) {
+              if (cancelled) return false;
+              if (google?.maps?.DirectionsService) return true;
+              await new Promise((r) => setTimeout(r, 50));
             }
-          );
+            return false;
+          };
+
+          void (async () => {
+            const ok = await waitForDirectionsService();
+            if (cancelled) return;
+
+            if (!ok) {
+              setEstimate(null);
+              setEstimateError('Google Maps is not correctly loaded on this page.');
+              setEstimating(false);
+              return;
+            }
+
+            const service = new google.maps.DirectionsService();
+
+            service.route(
+              {
+                origin: pickup,
+                destination: dest,
+                travelMode: google.maps.TravelMode.DRIVING,
+              },
+              (result: any, status: any) => {
+                if (cancelled) return;
+
+                if (status !== 'OK' || !result?.routes?.[0]?.legs?.[0]) {
+                  setEstimate(null);
+                  setEstimateError('Could not estimate route for those addresses.');
+                  setEstimating(false);
+                  return;
+                }
+
+                const leg = result.routes[0].legs[0];
+                const distanceMeters = leg.distance?.value as number | undefined;
+                const durationSeconds = leg.duration?.value as number | undefined;
+
+                if (typeof distanceMeters !== 'number' || typeof durationSeconds !== 'number') {
+                  setEstimate(null);
+                  setEstimateError('Could not estimate route distance/duration.');
+                  setEstimating(false);
+                  return;
+                }
+
+                const distanceKm = distanceMeters / 1000;
+                const durationMinutes = durationSeconds / 60;
+
+                // Dutch maximum taxi tariff
+                const estimatedPrice = 4.31 + distanceKm * 3.17 + durationMinutes * 0.52;
+
+                setEstimate({ distanceKm, durationMinutes, estimatedPrice });
+                setEstimating(false);
+              }
+            );
+          })();
+
+          return;
         })
         .catch((err) => {
           if (cancelled) return;
