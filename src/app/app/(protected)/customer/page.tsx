@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 
+import { CustomerPickupMap } from '@/components/maps/CustomerPickupMap';
 import { useAuth } from '@/context/AuthContext';
 import { createRideRequest } from '@/lib/firebase/rides';
 import { applyToBecomeDriver } from '@/lib/firebase/users';
@@ -155,6 +156,16 @@ export default function CustomerPage() {
       <header className="space-y-1">
         <h1 className="text-2xl font-semibold tracking-tight">Customer Dashboard</h1>
       </header>
+
+      {!currentRide ? (
+        <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
+          <div className="mb-3">
+            <h2 className="text-sm font-semibold text-white/90">Pickup Location</h2>
+          </div>
+
+          <CustomerPickupMap />
+        </section>
+      ) : null}
 
       {currentRide ? (
         <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
