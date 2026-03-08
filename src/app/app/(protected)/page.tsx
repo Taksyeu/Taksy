@@ -16,15 +16,17 @@ export default function PlatformHomePage() {
     if (loading) return;
     if (!firebaseUser) return;
 
-    // Only redirect once we have a role.
-    const target = getRoleHomePath(platformUser?.role);
+    // Only redirect once we have the platform user doc.
+    if (!platformUser) return;
+
+    const target = getRoleHomePath(platformUser.role);
     if (target !== '/app') {
       router.replace(target);
     }
-  }, [firebaseUser, loading, platformUser?.role, router]);
+  }, [firebaseUser, loading, platformUser, router]);
 
   // If we're about to redirect, avoid flashing the /app landing content.
-  if (!loading && firebaseUser && platformUser?.role && getRoleHomePath(platformUser.role) !== '/app') {
+  if (!loading && firebaseUser && platformUser && getRoleHomePath(platformUser.role) !== '/app') {
     return <div className="text-sm text-white/70">Redirecting…</div>;
   }
 

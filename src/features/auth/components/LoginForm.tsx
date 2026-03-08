@@ -18,9 +18,13 @@ export function LoginForm() {
     if (loading) return;
     if (!firebaseUser) return;
 
-    const target = getRoleHomePath(platformUser?.role);
+    // Only redirect once the platform user doc has been loaded.
+    // Otherwise we might route to /app (unknown role) and never recover.
+    if (!platformUser) return;
+
+    const target = getRoleHomePath(platformUser.role);
     router.replace(target);
-  }, [firebaseUser, loading, platformUser?.role, router]);
+  }, [firebaseUser, loading, platformUser, router]);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

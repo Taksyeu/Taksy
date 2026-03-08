@@ -141,6 +141,15 @@ export default function CustomerPage() {
           if (cancelled) return;
 
           const google = (window as any).google;
+
+          // Defensive: ensure Google Maps actually initialized.
+          if (!google?.maps?.DirectionsService) {
+            setEstimate(null);
+            setEstimateError('Google Maps is not correctly loaded on this page.');
+            setEstimating(false);
+            return;
+          }
+
           const service = new google.maps.DirectionsService();
 
           service.route(
@@ -267,8 +276,8 @@ export default function CustomerPage() {
     return rideHistory.filter((ride) => {
       if (!currentId) return true;
       if (ride.id !== currentId) return true;
-      // Exclude the current active ride from history until it is completed.
-      return currentStatus === 'COMPLETED';
+      // Exclude the current active ride from history until it is completed/cancelled.
+      return ['COMPLETED', 'CANCELLED'].includes(String(currentStatus ?? '').toUpperCase());
     });
   }, [currentRide?.id, currentRide?.status, rideHistory]);
 
@@ -284,17 +293,15 @@ export default function CustomerPage() {
         <h1 className="text-2xl font-semibold tracking-tight">Customer Dashboard</h1>
       </header>
 
-      {!currentRide ? (
-        <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
-          <div className="mb-3">
-            <h2 className="text-sm font-semibold text-white/90">Pickup Location</h2>
-          </div>
+      <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
+        <div className="mb-3">
+          <h2 className="text-sm font-semibold text-white/90">Pickup Location</h2>
+        </div>
 
-          <CustomerPickupMap />
-        </section>
-      ) : null}
+        <CustomerPickupMap />
+      </section>
 
-      {currentRide ? (
+      {currentRide && !['COMPLETED', 'CANCELLED'].includes(String(currentRide.status ?? '').toUpperCase()) ? (
         <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
           <div className="mb-3">
             <h2 className="text-sm font-semibold text-white/90">Current Ride</h2>
