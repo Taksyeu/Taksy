@@ -7,6 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 import { createRideRequest } from '@/lib/firebase/rides';
 import { assignNearestDriverToRide } from '@/lib/firebase/rideMatching';
 import { applyToBecomeDriver } from '@/lib/firebase/users';
+import { getGoogleMapsApiKey, loadGoogleMaps } from '@/lib/maps/googleMaps';
 import {
   subscribeToRiderLatestRide,
   subscribeToRiderRideHistory,
@@ -25,6 +26,14 @@ export default function CustomerPage() {
   const [pickupLocation, setPickupLocation] = React.useState('');
   const [pickupCoords, setPickupCoords] = React.useState<{ lat: number; lng: number } | null>(null);
   const [destination, setDestination] = React.useState('');
+
+  const [estimate, setEstimate] = React.useState<{
+    distanceKm: number;
+    durationMinutes: number;
+    estimatedPrice: number;
+  } | null>(null);
+  const [estimating, setEstimating] = React.useState(false);
+  const [estimateError, setEstimateError] = React.useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState(false);
@@ -102,6 +111,90 @@ export default function CustomerPage() {
     };
   }, [authLoading, firebaseUser]);
 
+  React.useEffect(() => {
+    const pickup = pickupLocation.trim();
+    const dest = destination.trim();
+
+    if (!pickup || !dest) {
+      setEstimate(null);
+      setEstimateError(null);
+      setEstimating(false);
+      return;
+    }
+
+    let cancelled = false;
+    setEstimating(true);
+    setEstimateError(null);
+
+    const timer = window.setTimeout(() => {
+      const apiKey = getGoogleMapsApiKey();
+      if (!apiKey) {
+        if (cancelled) return;
+        setEstimate(null);
+        setEstimateError('Google Maps API key is not configured.');
+        setEstimating(false);
+        return;
+      }
+
+      loadGoogleMaps(apiKey)
+        .then(() => {
+          if (cancelled) return;
+
+          const google = (window as any).google;
+          const service = new google.maps.DirectionsService();
+
+          service.route(
+            {
+              origin: pickup,
+              destination: dest,
+              travelMode: google.maps.TravelMode.DRIVING,
+            },
+            (result: any, status: any) => {
+              if (cancelled) return;
+
+              if (status !== 'OK' || !result?.routes?.[0]?.legs?.[0]) {
+                setEstimate(null);
+                setEstimateError('Could not estimate route for those addresses.');
+                setEstimating(false);
+                return;
+              }
+
+              const leg = result.routes[0].legs[0];
+              const distanceMeters = leg.distance?.value as number | undefined;
+              const durationSeconds = leg.duration?.value as number | undefined;
+
+              if (typeof distanceMeters !== 'number' || typeof durationSeconds !== 'number') {
+                setEstimate(null);
+                setEstimateError('Could not estimate route distance/duration.');
+                setEstimating(false);
+                return;
+              }
+
+              const distanceKm = distanceMeters / 1000;
+              const durationMinutes = durationSeconds / 60;
+
+              // Dutch maximum taxi tariff
+              const estimatedPrice = 4.31 + distanceKm * 3.17 + durationMinutes * 0.52;
+
+              setEstimate({ distanceKm, durationMinutes, estimatedPrice });
+              setEstimating(false);
+            }
+          );
+        })
+        .catch((err) => {
+          if (cancelled) return;
+          setEstimate(null);
+          setEstimateError(err instanceof Error ? err.message : 'Failed to load Google Maps.');
+          setEstimating(false);
+        });
+    }, 650);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [pickupLocation, destination]);
+
   async function onApplyToBecomeDriver() {
     setError(null);
     setDriverApplied(false);
@@ -148,6 +241,9 @@ export default function CustomerPage() {
         destination: dest,
         pickupLat: pickupCoords?.lat,
         pickupLng: pickupCoords?.lng,
+        distanceKm: estimate?.distanceKm,
+        durationMinutes: estimate?.durationMinutes,
+        estimatedPrice: estimate?.estimatedPrice,
       });
 
       // Best-effort nearest-driver assignment.
@@ -265,6 +361,28 @@ export default function CustomerPage() {
             {error ? (
               <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-100">
                 {error}
+              </div>
+            ) : null}
+
+            {estimateError ? (
+              <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-100">
+                {estimateError}
+              </div>
+            ) : null}
+
+            {estimating ? <div className="text-xs text-white/50">Estimating route…</div> : null}
+
+            {estimate ? (
+              <div className="rounded-xl border border-white/10 bg-neutral-950/40 px-3 py-2 text-sm text-white/80">
+                <div>Distance: {estimate.distanceKm.toFixed(1)} km</div>
+                <div>Duration: {Math.round(estimate.durationMinutes)} min</div>
+                <div>
+                  Estimated price:{' '}
+                  {new Intl.NumberFormat('nl-NL', {
+                    style: 'currency',
+                    currency: 'EUR',
+                  }).format(estimate.estimatedPrice)}
+                </div>
               </div>
             ) : null}
 
