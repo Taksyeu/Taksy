@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import { LogoutButton } from '@/components/auth/LogoutButton';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 const nav = [
@@ -21,13 +22,17 @@ export default function PlatformProtectedLayout({ children }: { children: React.
               TAKSY Platform
             </Link>
 
-            <nav className="hidden items-center gap-4 text-sm text-white/70 sm:flex">
-              {nav.map((item) => (
-                <Link key={item.href} href={item.href} className="hover:text-white">
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
+            <div className="flex items-center gap-3">
+              <nav className="hidden items-center gap-4 text-sm text-white/70 sm:flex">
+                {nav.map((item) => (
+                  <Link key={item.href} href={item.href} className="hover:text-white">
+                    {item.label}
+                  </Link>
+                ))}
+              </nav>
+
+              <LogoutButton />
+            </div>
           </div>
         </header>
 
