@@ -5,6 +5,7 @@ import * as React from 'react';
 import { CustomerPickupMap } from '@/components/maps/CustomerPickupMap';
 import { useAuth } from '@/context/AuthContext';
 import { createRideRequest } from '@/lib/firebase/rides';
+import { assignNearestDriverToRide } from '@/lib/firebase/rideMatching';
 import { applyToBecomeDriver } from '@/lib/firebase/users';
 import {
   subscribeToRiderLatestRide,
@@ -22,6 +23,7 @@ export default function CustomerPage() {
   const [rideHistory, setRideHistory] = React.useState<RiderRideHistoryItem[]>([]);
 
   const [pickupLocation, setPickupLocation] = React.useState('');
+  const [pickupCoords, setPickupCoords] = React.useState<{ lat: number; lng: number } | null>(null);
   const [destination, setDestination] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -29,6 +31,27 @@ export default function CustomerPage() {
 
   const [driverApplying, setDriverApplying] = React.useState(false);
   const [driverApplied, setDriverApplied] = React.useState(false);
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Best-effort pickup coordinates for nearest-driver matching.
+    if (!('geolocation' in navigator)) {
+      setPickupCoords({ lat: 52.3676, lng: 4.9041 });
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setPickupCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+      },
+      () => {
+        // Permission denied → default Amsterdam.
+        setPickupCoords({ lat: 52.3676, lng: 4.9041 });
+      },
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
+  }, []);
 
   React.useEffect(() => {
     if (authLoading) return;
@@ -119,11 +142,19 @@ export default function CustomerPage() {
 
     try {
       setIsSubmitting(true);
-      await createRideRequest({
+      const rideId = await createRideRequest({
         riderId: firebaseUser.uid,
         pickupLocation: pickup,
         destination: dest,
+        pickupLat: pickupCoords?.lat,
+        pickupLng: pickupCoords?.lng,
       });
+
+      // Best-effort nearest-driver assignment.
+      if (pickupCoords) {
+        await assignNearestDriverToRide(rideId, pickupCoords.lat, pickupCoords.lng);
+      }
+
       setSuccess(true);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to create ride request.';

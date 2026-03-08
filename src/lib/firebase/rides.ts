@@ -8,6 +8,8 @@ type CreateRideRequestInput = {
   riderId: string;
   pickupLocation: string;
   destination: string;
+  pickupLat?: number;
+  pickupLng?: number;
 };
 
 function requireFirestore() {
@@ -22,6 +24,8 @@ export async function createRideRequest(input: CreateRideRequestInput): Promise<
     riderId: input.riderId,
     pickupLocation: input.pickupLocation,
     destination: input.destination,
+    pickupLat: input.pickupLat ?? null,
+    pickupLng: input.pickupLng ?? null,
     status: 'REQUESTED',
     createdAt: serverTimestamp(),
   });

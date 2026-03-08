@@ -11,7 +11,7 @@ import { upsertDriverLocation } from '@/lib/firebase/driverLocation';
 import { acceptRide, arriveAtPickup, completeRide, startRide } from '@/lib/firebase/ridesActions';
 import {
   subscribeToDriverActiveRide,
-  subscribeToRequestedRides,
+  subscribeToDriverAssignedRides,
   type RideRequest,
 } from '@/lib/firebase/ridesFeed';
 
@@ -88,9 +88,10 @@ export default function DriverPage() {
             return;
           }
 
-          // No active ride; ensure requested feed is subscribed.
+          // No active ride; ensure assigned feed is subscribed.
           if (!unsubRequested) {
-            unsubRequested = subscribeToRequestedRides(
+            unsubRequested = subscribeToDriverAssignedRides(
+              firebaseUser.uid,
               (next) => {
                 setRides(next);
                 setLoading(false);
@@ -250,7 +251,7 @@ export default function DriverPage() {
     <div className="mx-auto w-full max-w-[720px] space-y-6">
       <header className="space-y-1">
         <h1 className="text-2xl font-semibold tracking-tight">Driver Dashboard</h1>
-        <p className="text-sm text-white/60">Live feed of requested rides (UI only for accepting).</p>
+        <p className="text-sm text-white/60">Rides assigned to you (UI only for accepting).</p>
       </header>
 
       {error ? (
@@ -327,12 +328,12 @@ export default function DriverPage() {
         </section>
       ) : (
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold text-white/90">Ride Requests</h2>
+          <h2 className="text-sm font-semibold text-white/90">Assigned Rides</h2>
 
           {loading ? <div className="text-sm text-white/60">Loading…</div> : null}
 
           {!loading && rides.length === 0 ? (
-            <div className="text-sm text-white/60">No requests right now.</div>
+            <div className="text-sm text-white/60">No assigned rides right now.</div>
           ) : null}
 
           <div className="grid gap-3">

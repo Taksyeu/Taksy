@@ -50,6 +50,41 @@ export function subscribeToRequestedRides(
   );
 }
 
+export function subscribeToDriverAssignedRides(
+  driverId: string,
+  onData: (rides: RideRequest[]) => void,
+  onError?: (error: Error) => void
+): Unsubscribe {
+  const db = requireFirestore();
+
+  const q = query(
+    collection(db, 'rides'),
+    where('assignedDriverId', '==', driverId),
+    where('status', '==', 'ASSIGNED'),
+    limit(10)
+  );
+
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const rides: RideRequest[] = snapshot.docs.map((doc) => {
+        const data = doc.data() as Partial<RideRequest>;
+        return {
+          id: doc.id,
+          pickupLocation: data.pickupLocation ?? '',
+          destination: data.destination ?? '',
+          status: data.status ?? '',
+        };
+      });
+
+      onData(rides);
+    },
+    (err) => {
+      onError?.(err instanceof Error ? err : new Error('Failed to subscribe to assigned rides'));
+    }
+  );
+}
+
 export function subscribeToDriverActiveRide(
   driverId: string,
   onData: (ride: RideRequest | null) => void,
