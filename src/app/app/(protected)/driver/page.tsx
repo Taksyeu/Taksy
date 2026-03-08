@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { UserRole } from '@/types/user';
 import { subscribeToDriverCompletedRides, type DriverCompletedRide } from '@/lib/firebase/driverRide';
+import { upsertDriverLocation } from '@/lib/firebase/driverLocation';
 import { acceptRide, arriveAtPickup, completeRide, startRide } from '@/lib/firebase/ridesActions';
 import {
   subscribeToDriverActiveRide,
@@ -118,6 +119,35 @@ export default function DriverPage() {
       unsubCompleted?.();
     };
   }, [authLoading, firebaseUser]);
+
+  React.useEffect(() => {
+    if (authLoading) return;
+
+    // Only track location for approved drivers.
+    const isApprovedDriver =
+      !!firebaseUser &&
+      !!platformUser &&
+      platformUser.role === UserRole.DRIVER &&
+      platformUser.isDriverApproved === true;
+
+    if (!isApprovedDriver) return;
+    if (typeof window === 'undefined') return;
+    if (!('geolocation' in navigator)) return;
+
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        void upsertDriverLocation(firebaseUser.uid, pos.coords.latitude, pos.coords.longitude);
+      },
+      () => {
+        // No UI yet; silently ignore permission errors.
+      },
+      { enableHighAccuracy: true, maximumAge: 10_000, timeout: 10_000 }
+    );
+
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
+  }, [authLoading, firebaseUser, platformUser]);
 
   async function onAcceptRide(rideId: string) {
     setError(null);
