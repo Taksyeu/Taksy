@@ -3,9 +3,9 @@
 import * as React from 'react';
 import type { User as FirebaseUser } from 'firebase/auth';
 import { onAuthStateChanged } from 'firebase/auth';
+import { doc, onSnapshot } from 'firebase/firestore';
 
-import { auth } from '@/lib/firebase/client';
-import { getUserById } from '@/lib/firebase/users';
+import { auth, firestore } from '@/lib/firebase/client';
 import type { User as PlatformUser } from '@/types/user';
 
 type AuthContextValue = {
@@ -30,9 +30,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const unsub = onAuthStateChanged(auth, async (user) => {
+    let unsubUserDoc: (() => void) | null = null;
+
+    const unsubAuth = onAuthStateChanged(auth, (user) => {
       setLoading(true);
       setFirebaseUser(user);
+
+      // Stop any previous user doc subscription.
+      unsubUserDoc?.();
+      unsubUserDoc = null;
 
       if (!user) {
         setPlatformUser(null);
@@ -40,18 +46,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      try {
-        const doc = await getUserById(user.uid);
-        setPlatformUser(doc);
-      } catch {
-        // Keep platformUser null if Firestore fetch fails.
+      // Subscribe to the platform user doc in real time so role/approval changes apply immediately.
+      if (!firestore) {
         setPlatformUser(null);
-      } finally {
         setLoading(false);
+        return;
       }
+
+      const ref = doc(firestore, 'users', user.uid);
+      unsubUserDoc = onSnapshot(
+        ref,
+        (snap) => {
+          setPlatformUser(snap.exists() ? (snap.data() as PlatformUser) : null);
+          setLoading(false);
+        },
+        () => {
+          setPlatformUser(null);
+          setLoading(false);
+        }
+      );
     });
 
-    return () => unsub();
+    return () => {
+      unsubUserDoc?.();
+      unsubAuth();
+    };
   }, []);
 
   const value = React.useMemo<AuthContextValue>(

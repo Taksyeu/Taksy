@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useRouter } from 'next/navigation';
 
 import { CustomerPickupMap } from '@/components/maps/CustomerPickupMap';
 import { useAuth } from '@/context/AuthContext';
@@ -16,6 +17,7 @@ import {
 } from '@/lib/firebase/riderRide';
 
 export default function CustomerPage() {
+  const router = useRouter();
   const { firebaseUser, platformUser, loading: authLoading } = useAuth();
 
   const [currentRide, setCurrentRide] = React.useState<RiderLatestRide | null>(null);
@@ -40,6 +42,23 @@ export default function CustomerPage() {
 
   const [driverApplying, setDriverApplying] = React.useState(false);
   const [driverApplied, setDriverApplied] = React.useState(false);
+
+  React.useEffect(() => {
+    if (authLoading) return;
+
+    // Drivers/admins should never see the customer dashboard UI.
+    const role = String(platformUser?.role ?? '').toUpperCase();
+    if (firebaseUser && platformUser) {
+      if (role === 'DRIVER' && platformUser.isDriverApproved === true) {
+        router.replace('/app/driver');
+        return;
+      }
+      if (role === 'ADMIN') {
+        router.replace('/app/admin');
+        return;
+      }
+    }
+  }, [authLoading, firebaseUser, platformUser, router]);
 
   React.useEffect(() => {
     if (typeof window === 'undefined') return;

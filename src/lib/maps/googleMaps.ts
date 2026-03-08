@@ -22,6 +22,25 @@ export function loadGoogleMaps(apiKey: string): Promise<void> {
   if (w.google?.maps) return Promise.resolve();
   if (w.__gmapsLoaderPromise) return w.__gmapsLoaderPromise;
 
+  function waitForGoogleMapsReady(resolve: () => void, reject: (err: Error) => void) {
+    const start = Date.now();
+    const timeoutMs = 10_000;
+
+    const tick = () => {
+      if (w.google?.maps) {
+        resolve();
+        return;
+      }
+      if (Date.now() - start > timeoutMs) {
+        reject(new Error('Google Maps did not initialize.'));
+        return;
+      }
+      setTimeout(tick, 50);
+    };
+
+    tick();
+  }
+
   w.__gmapsLoaderPromise = new Promise<void>((resolve, reject) => {
     const existing = document.querySelector<HTMLScriptElement>('script[data-google-maps="true"]');
 
@@ -37,15 +56,14 @@ export function loadGoogleMaps(apiKey: string): Promise<void> {
       const complete = (existing as any).readyState === 'complete';
 
       if (loaded || complete) {
-        // Give the browser a tick to populate window.google.
+        // Script already loaded; wait until window.google.maps is actually available.
         setTimeout(() => {
-          if (w.google?.maps) resolve();
-          else reject(new Error('Google Maps did not initialize.'));
+          waitForGoogleMapsReady(resolve, reject);
         }, 0);
         return;
       }
 
-      existing.addEventListener('load', () => resolve(), { once: true });
+      existing.addEventListener('load', () => waitForGoogleMapsReady(resolve, reject), { once: true });
       existing.addEventListener('error', () => reject(new Error('Failed to load Google Maps.')), { once: true });
       return;
     }
@@ -57,7 +75,7 @@ export function loadGoogleMaps(apiKey: string): Promise<void> {
     script.dataset.googleMaps = 'true';
     script.onload = () => {
       script.dataset.loaded = 'true';
-      resolve();
+      waitForGoogleMapsReady(resolve, reject);
     };
     script.onerror = () => reject(new Error('Failed to load Google Maps.'));
     document.head.appendChild(script);
