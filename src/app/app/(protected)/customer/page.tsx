@@ -4,6 +4,7 @@ import * as React from 'react';
 
 import { useAuth } from '@/context/AuthContext';
 import { createRideRequest } from '@/lib/firebase/rides';
+import { applyToBecomeDriver } from '@/lib/firebase/users';
 import {
   subscribeToRiderLatestRide,
   subscribeToRiderRideHistory,
@@ -24,6 +25,9 @@ export default function CustomerPage() {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState(false);
+
+  const [driverApplying, setDriverApplying] = React.useState(false);
+  const [driverApplied, setDriverApplied] = React.useState(false);
 
   React.useEffect(() => {
     if (authLoading) return;
@@ -73,6 +77,27 @@ export default function CustomerPage() {
       unsubHistory?.();
     };
   }, [authLoading, firebaseUser]);
+
+  async function onApplyToBecomeDriver() {
+    setError(null);
+    setDriverApplied(false);
+
+    if (!firebaseUser) {
+      setError('You must be logged in to apply.');
+      return;
+    }
+
+    try {
+      setDriverApplying(true);
+      await applyToBecomeDriver(firebaseUser.uid);
+      setDriverApplied(true);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to submit driver application.';
+      setError(message);
+    } finally {
+      setDriverApplying(false);
+    }
+  }
 
   async function onRequestRide() {
     setError(null);
@@ -222,40 +247,63 @@ export default function CustomerPage() {
       )}
 
       {firebaseUser ? (
-        <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
-          <div className="mb-3">
-            <h2 className="text-sm font-semibold text-white/90">Ride History</h2>
-          </div>
+        <>
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <div className="mb-3">
+              <h2 className="text-sm font-semibold text-white/90">Ride History</h2>
+            </div>
 
-          {visibleHistory.length === 0 ? (
-            <div className="text-sm text-white/60">No ride history yet.</div>
-          ) : (
-            <div className="space-y-3">
-              {visibleHistory.map((ride) => (
-                <div key={ride.id} className="rounded-xl border border-white/10 bg-neutral-950/40 p-3">
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    <div>
-                      <div className="text-[11px] font-medium text-white/60">Pickup</div>
-                      <div className="text-sm text-white/90">{ride.pickupLocation || '—'}</div>
-                    </div>
-                    <div>
-                      <div className="text-[11px] font-medium text-white/60">Destination</div>
-                      <div className="text-sm text-white/90">{ride.destination || '—'}</div>
-                    </div>
-                    <div>
-                      <div className="text-[11px] font-medium text-white/60">Status</div>
-                      <div className="text-sm text-white/90">{ride.status || '—'}</div>
-                    </div>
-                    <div>
-                      <div className="text-[11px] font-medium text-white/60">Created</div>
-                      <div className="text-sm text-white/90">{formatCreatedAt(ride.createdAt)}</div>
+            {visibleHistory.length === 0 ? (
+              <div className="text-sm text-white/60">No ride history yet.</div>
+            ) : (
+              <div className="space-y-3">
+                {visibleHistory.map((ride) => (
+                  <div key={ride.id} className="rounded-xl border border-white/10 bg-neutral-950/40 p-3">
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      <div>
+                        <div className="text-[11px] font-medium text-white/60">Pickup</div>
+                        <div className="text-sm text-white/90">{ride.pickupLocation || '—'}</div>
+                      </div>
+                      <div>
+                        <div className="text-[11px] font-medium text-white/60">Destination</div>
+                        <div className="text-sm text-white/90">{ride.destination || '—'}</div>
+                      </div>
+                      <div>
+                        <div className="text-[11px] font-medium text-white/60">Status</div>
+                        <div className="text-sm text-white/90">{ride.status || '—'}</div>
+                      </div>
+                      <div>
+                        <div className="text-[11px] font-medium text-white/60">Created</div>
+                        <div className="text-sm text-white/90">{formatCreatedAt(ride.createdAt)}</div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+            )}
+          </section>
+
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <div className="mb-3">
+              <h2 className="text-sm font-semibold text-white/90">Become a Driver</h2>
             </div>
-          )}
-        </section>
+
+            {driverApplied ? (
+              <div className="mb-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-100">
+                Driver application submitted. Waiting for approval.
+              </div>
+            ) : null}
+
+            <button
+              type="button"
+              onClick={onApplyToBecomeDriver}
+              disabled={driverApplying}
+              className="inline-flex w-full items-center justify-center rounded-xl bg-white px-3 py-2.5 text-sm font-semibold text-neutral-950 transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {driverApplying ? 'Submitting…' : 'Apply to become a driver'}
+            </button>
+          </section>
+        </>
       ) : null}
 
       {rideLoading ? <div className="text-sm text-white/60">Loading…</div> : null}

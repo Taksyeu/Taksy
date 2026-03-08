@@ -46,3 +46,22 @@ export async function updateUserRole(uid: string, role: UserRole): Promise<void>
   const ref = doc(db, usersCollection, uid);
   await updateDoc(ref, { role });
 }
+
+/**
+ * Apply to become a driver:
+ * - Creates the user doc if missing
+ * - Updates role + approval fields
+ */
+export async function applyToBecomeDriver(uid: string): Promise<void> {
+  const db = requireFirestore();
+  const ref = doc(db, usersCollection, uid);
+
+  await setDoc(
+    ref,
+    {
+      role: 'DRIVER_PENDING',
+      isDriverApproved: false,
+    },
+    { merge: true }
+  );
+}

@@ -2,6 +2,7 @@ import type { Timestamp } from 'firebase/firestore';
 
 export enum UserRole {
   RIDER = 'RIDER',
+  DRIVER_PENDING = 'DRIVER_PENDING',
   DRIVER = 'DRIVER',
   ADMIN = 'ADMIN',
 }

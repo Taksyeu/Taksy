@@ -2,7 +2,10 @@
 
 import * as React from 'react';
 
+import { useRouter } from 'next/navigation';
+
 import { useAuth } from '@/context/AuthContext';
+import { UserRole } from '@/types/user';
 import { subscribeToDriverCompletedRides, type DriverCompletedRide } from '@/lib/firebase/driverRide';
 import { acceptRide, arriveAtPickup, completeRide, startRide } from '@/lib/firebase/ridesActions';
 import {
@@ -12,7 +15,8 @@ import {
 } from '@/lib/firebase/ridesFeed';
 
 export default function DriverPage() {
-  const { firebaseUser, loading: authLoading } = useAuth();
+  const router = useRouter();
+  const { firebaseUser, platformUser, loading: authLoading } = useAuth();
 
   const [activeRide, setActiveRide] = React.useState<RideRequest | null>(null);
   const [rides, setRides] = React.useState<RideRequest[]>([]);
@@ -29,6 +33,15 @@ export default function DriverPage() {
   React.useEffect(() => {
     // Wait for auth resolution so we have the driver's uid.
     if (authLoading) return;
+
+    // Gate driver dashboard: only approved drivers can access.
+    if (firebaseUser && platformUser) {
+      const isApprovedDriver = platformUser.role === UserRole.DRIVER && platformUser.isDriverApproved === true;
+      if (!isApprovedDriver) {
+        router.replace('/app/customer');
+        return;
+      }
+    }
 
     setLoading(true);
     setCompletedLoading(true);
