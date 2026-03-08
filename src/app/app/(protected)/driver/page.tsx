@@ -3,6 +3,7 @@
 import * as React from 'react';
 
 import { useAuth } from '@/context/AuthContext';
+import { subscribeToDriverCompletedRides, type DriverCompletedRide } from '@/lib/firebase/driverRide';
 import { acceptRide, arriveAtPickup, completeRide, startRide } from '@/lib/firebase/ridesActions';
 import {
   subscribeToDriverActiveRide,
@@ -16,6 +17,8 @@ export default function DriverPage() {
   const [activeRide, setActiveRide] = React.useState<RideRequest | null>(null);
   const [rides, setRides] = React.useState<RideRequest[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [completedRides, setCompletedRides] = React.useState<DriverCompletedRide[]>([]);
+  const [completedLoading, setCompletedLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState<string | null>(null);
   const [acceptingRideId, setAcceptingRideId] = React.useState<string | null>(null);
@@ -28,19 +31,35 @@ export default function DriverPage() {
     if (authLoading) return;
 
     setLoading(true);
+    setCompletedLoading(true);
     setError(null);
 
     if (!firebaseUser) {
       setActiveRide(null);
       setRides([]);
+      setCompletedRides([]);
+      setCompletedLoading(false);
       setLoading(false);
       return;
     }
 
     let unsubActive: (() => void) | null = null;
     let unsubRequested: (() => void) | null = null;
+    let unsubCompleted: (() => void) | null = null;
 
     try {
+      unsubCompleted = subscribeToDriverCompletedRides(
+        firebaseUser.uid,
+        (next) => {
+          setCompletedRides(next);
+          setCompletedLoading(false);
+        },
+        (err) => {
+          setError(err.message);
+          setCompletedLoading(false);
+        }
+      );
+
       unsubActive = subscribeToDriverActiveRide(
         firebaseUser.uid,
         (ride) => {
@@ -83,6 +102,7 @@ export default function DriverPage() {
     return () => {
       unsubActive?.();
       unsubRequested?.();
+      unsubCompleted?.();
     };
   }, [authLoading, firebaseUser]);
 
@@ -170,6 +190,18 @@ export default function DriverPage() {
       setCompletingRideId(null);
     }
   }
+
+  const dateFormatter = React.useMemo(
+    () =>
+      new Intl.DateTimeFormat(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+    []
+  );
 
   return (
     <div className="mx-auto w-full max-w-[720px] space-y-6">
@@ -293,6 +325,39 @@ export default function DriverPage() {
           </div>
         </section>
       )}
+
+      <section className="space-y-3">
+        <h2 className="text-sm font-semibold text-white/90">Completed Rides</h2>
+
+        {completedLoading ? <div className="text-sm text-white/60">Loading…</div> : null}
+
+        {!completedLoading && completedRides.length === 0 ? (
+          <div className="text-sm text-white/60">No completed rides yet.</div>
+        ) : null}
+
+        <div className="grid gap-3">
+          {completedRides.map((ride) => (
+            <div key={ride.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div className="grid gap-2 sm:grid-cols-3">
+                <div>
+                  <div className="text-xs font-medium text-white/60">Pickup</div>
+                  <div className="text-sm text-white/90">{ride.pickupLocation || '—'}</div>
+                </div>
+                <div>
+                  <div className="text-xs font-medium text-white/60">Destination</div>
+                  <div className="text-sm text-white/90">{ride.destination || '—'}</div>
+                </div>
+                <div>
+                  <div className="text-xs font-medium text-white/60">Completed</div>
+                  <div className="text-sm text-white/90">
+                    {ride.createdAt ? dateFormatter.format(ride.createdAt.toDate()) : '—'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
