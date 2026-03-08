@@ -163,7 +163,7 @@ export default function CustomerPage() {
 
           // Defensive: ensure DirectionsService is actually available before routing.
           const waitForDirectionsService = async () => {
-            for (let i = 0; i < 40; i++) {
+            for (let i = 0; i < 200; i++) {
               if (cancelled) return false;
               if (google?.maps?.DirectionsService) return true;
               await new Promise((r) => setTimeout(r, 50));
@@ -177,7 +177,9 @@ export default function CustomerPage() {
 
             if (!ok) {
               setEstimate(null);
-              setEstimateError('Google Maps is not correctly loaded on this page.');
+              setEstimateError(
+                `Google Maps is not correctly loaded on this page. (apiKey=${getGoogleMapsApiKey() ? 'present' : 'missing'})`
+              );
               setEstimating(false);
               return;
             }

@@ -2,7 +2,6 @@ import {
   collection,
   limit,
   onSnapshot,
-  orderBy,
   query,
   where,
   type Timestamp,
@@ -38,29 +37,44 @@ export function subscribeToRiderLatestRide(
 ): Unsubscribe {
   const db = requireFirestore();
 
-  const q = query(
-    collection(db, 'rides'),
-    where('riderId', '==', riderId),
-    orderBy('createdAt', 'desc'),
-    limit(1)
-  );
+  // Avoid composite index requirement (where + orderBy) by sorting client-side.
+  const q = query(collection(db, 'rides'), where('riderId', '==', riderId), limit(25));
 
   return onSnapshot(
     q,
     (snapshot) => {
-      const docSnap = snapshot.docs[0];
-      if (!docSnap) {
+      if (snapshot.empty) {
         onData(null);
         return;
       }
 
-      const data = docSnap.data() as Partial<RiderLatestRide>;
-      onData({
-        id: docSnap.id,
-        pickupLocation: data.pickupLocation ?? '',
-        destination: data.destination ?? '',
-        status: data.status ?? '',
-      });
+      const pickBest = snapshot.docs
+        .map((docSnap) => {
+          const data = docSnap.data() as Partial<RiderLatestRide> & { createdAt?: Timestamp | null };
+          return {
+            id: docSnap.id,
+            pickupLocation: data.pickupLocation ?? '',
+            destination: data.destination ?? '',
+            status: data.status ?? '',
+            createdAt: data.createdAt ?? null,
+          };
+        })
+        .sort((a, b) => {
+          const at = a.createdAt?.toMillis?.() ?? 0;
+          const bt = b.createdAt?.toMillis?.() ?? 0;
+          return bt - at;
+        })[0];
+
+      onData(
+        pickBest
+          ? {
+              id: pickBest.id,
+              pickupLocation: pickBest.pickupLocation,
+              destination: pickBest.destination,
+              status: pickBest.status,
+            }
+          : null
+      );
     },
     (err) => {
       onError?.(err instanceof Error ? err : new Error('Failed to subscribe to current ride'));
@@ -75,26 +89,29 @@ export function subscribeToRiderRideHistory(
 ): Unsubscribe {
   const db = requireFirestore();
 
-  const q = query(
-    collection(db, 'rides'),
-    where('riderId', '==', riderId),
-    orderBy('createdAt', 'desc'),
-    limit(10)
-  );
+  // Avoid composite index requirement (where + orderBy) by sorting client-side.
+  const q = query(collection(db, 'rides'), where('riderId', '==', riderId), limit(50));
 
   return onSnapshot(
     q,
     (snapshot) => {
-      const rides: RiderRideHistoryItem[] = snapshot.docs.map((docSnap) => {
-        const data = docSnap.data() as Partial<RiderRideHistoryItem> & { createdAt?: Timestamp | null };
-        return {
-          id: docSnap.id,
-          pickupLocation: data.pickupLocation ?? '',
-          destination: data.destination ?? '',
-          status: data.status ?? '',
-          createdAt: data.createdAt ?? null,
-        };
-      });
+      const rides: RiderRideHistoryItem[] = snapshot.docs
+        .map((docSnap) => {
+          const data = docSnap.data() as Partial<RiderRideHistoryItem> & { createdAt?: Timestamp | null };
+          return {
+            id: docSnap.id,
+            pickupLocation: data.pickupLocation ?? '',
+            destination: data.destination ?? '',
+            status: data.status ?? '',
+            createdAt: data.createdAt ?? null,
+          };
+        })
+        .sort((a, b) => {
+          const at = a.createdAt?.toMillis?.() ?? 0;
+          const bt = b.createdAt?.toMillis?.() ?? 0;
+          return bt - at;
+        })
+        .slice(0, 10);
 
       onData(rides);
     },
